@@ -3,18 +3,18 @@ const router = express.Router();
 
 const {
   getAllConsumerData,
-  getConsumerDataByEmail,
+  getConsumerDataById,
   createConsumerData,
   searchConsumerData,
   updateConsumerData,
   deleteConsumerData,
 } = require('../controllers/ConsumerData');
 
-router.get('pages/:page', getAllConsumerData);
-router.get('/:id', getConsumerDataByEmail);
+router.get('/pages/:page', getAllConsumerData);
+router.get('/user/:id', getConsumerDataById);
 router.get('/search', searchConsumerData);
-router.post('/', createConsumerData);
-router.put('/:id', updateConsumerData);
-router.delete('/:id', deleteConsumerData);
+router.post('/create', createConsumerData);
+router.put('/update/:id', updateConsumerData);
+router.delete('/delete/:id', deleteConsumerData);
 
 module.exports = router;

@@ -18,15 +18,13 @@ const getAllConsumerData = async (req, res) => {
       statusCode: 200,
     });
   } catch (error) {
-    res.status(404).json({ message: error.message });
+    res.json({ message: error.message });
   }
 };
-const getConsumerDataByEmail = async (req, res) => {
-  const { email } = req.params;
+const getConsumerDataById = async (req, res) => {
+  const { id } = req.params;
   try {
-    const consumerData = await ConsumerData.aggregate([
-      { $match: { email: email } },
-    ]);
+    const consumerData = await ConsumerData.findById(id);
     res.json({
       data: consumerData,
       statusCode: 200,
@@ -40,6 +38,7 @@ const getConsumerDataByEmail = async (req, res) => {
 const createConsumerData = async (req, res) => {
   try {
     const consumerData = req.body;
+    console.log(consumerData);
     const newConsumerData = new ConsumerData(consumerData);
     await newConsumerData.save();
     res.json({
@@ -84,13 +83,13 @@ const searchConsumerData = async (req, res) => {
   const filteredData = [];
 
   if (name) {
-    filteredData.push({ $match: { $name: name } });
+    filteredData.push({ $match: { name: name } });
   }
   if (email) {
-    filteredData.push({ $match: { $email: email } });
+    filteredData.push({ $match: { email: email } });
   }
   if (isActive !== undefined) {
-    filteredData.push({ $match: { $status: isActive } });
+    filteredData.push({ $match: { status: isActive } });
   }
 
   if (date === 'This Month') {
@@ -157,6 +156,6 @@ module.exports = {
   updateConsumerData,
   createConsumerData,
   getAllConsumerData,
-  getConsumerDataByEmail,
+  getConsumerDataById,
   searchConsumerData,
 };
