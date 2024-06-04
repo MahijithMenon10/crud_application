@@ -15,7 +15,9 @@ try {
 } catch (err) {
   console.log(err);
 }
-
+app.get('/', (req, res) => {
+  res.send('Hello World');
+});
 app.use('/data', consumerData);
 app.listen(port, () => {
   console.log(`http://localhost:${port}`);

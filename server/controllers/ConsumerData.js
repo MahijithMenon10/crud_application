@@ -151,6 +151,23 @@ const searchConsumerData = async (req, res) => {
     res.json({ message: err.message });
   }
 };
+
+const updateConsumerStatusData = async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(id))
+    return res.status(404).send(`No consumer data with id: ${id}`);
+
+  const updatedConsumerData = await ConsumerData.findByIdAndUpdate(
+    id,
+    { status: status },
+    { new: true }
+  );
+
+  res.json(updatedConsumerData);
+};
+
 module.exports = {
   deleteConsumerData,
   updateConsumerData,
@@ -158,4 +175,5 @@ module.exports = {
   getAllConsumerData,
   getConsumerDataById,
   searchConsumerData,
+  updateConsumerStatusData,
 };
