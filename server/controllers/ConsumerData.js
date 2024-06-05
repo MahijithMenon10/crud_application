@@ -3,15 +3,7 @@ const ConsumerData = require('../models/ConsumerData');
 
 const getAllConsumerData = async (req, res) => {
   try {
-    const { page } = req.params;
-    let skip = (page - 1) * 5;
-    const consumerData = await ConsumerData.aggregate([
-      { $match: {} },
-      { $skip: skip },
-      {
-        $limit: 5,
-      },
-    ]);
+    const consumerData = await ConsumerData.find();
     res.status(200).json({
       message: 'Consumer data fetched successfully',
       data: consumerData,

@@ -5,18 +5,16 @@ const {
   getAllConsumerData,
   getConsumerDataById,
   createConsumerData,
-  searchConsumerData,
   updateConsumerData,
   deleteConsumerData,
   updateConsumerStatusData,
 } = require('../controllers/ConsumerData');
 
-router.get('/pages/:page', getAllConsumerData);
-router.get('/user/:id', getConsumerDataById);
-router.get('/search', searchConsumerData);
-router.post('/create', createConsumerData);
-router.put('/update/:id', updateConsumerData);
-router.delete('/delete/:id', deleteConsumerData);
+router.get('/fetchUsers', getAllConsumerData);
+router.get('/fetchuser/:id', getConsumerDataById);
+router.post('/createuser', createConsumerData);
+router.put('/updateuser/:id', updateConsumerData);
+router.delete('/deleteuser/:id', deleteConsumerData);
 router.put('/statusupdate/:id', updateConsumerStatusData);
 
 module.exports = router;
