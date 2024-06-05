@@ -20,7 +20,7 @@ try {
 app.get('/', (req, res) => {
   res.send('Hello World');
 });
-app.use('/data', consumerData);
+app.use('/api', consumerData);
 app.listen(port, () => {
   console.log(`http://localhost:${port}`);
 });
