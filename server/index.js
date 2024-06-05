@@ -3,10 +3,12 @@ const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const consumerData = require('./routes/ConsumerData');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 dotenv.config();
 
 const app = express();
 app.use(bodyParser.json());
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 const port = 3000;
 try {
