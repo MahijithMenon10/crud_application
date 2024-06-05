@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 
 const Home = () => {
   const [pages, setPages] = useState(1);
-  const [data, setData] = useSelector;
+  const [data, setData] = useSelector((state) => state.data);
   useEffect(() => {
     axios
       .get(
