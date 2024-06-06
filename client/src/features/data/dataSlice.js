@@ -112,7 +112,7 @@ export const dataSlice = createSlice({
 
       .addCase(fetchUsers.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.data = [...state.data, action.payload];
+        state.data = action.payload;
       })
 
       .addCase(fetchUsers.rejected, (state, action) => {

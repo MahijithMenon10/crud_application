@@ -3,11 +3,19 @@ const ConsumerData = require('../models/ConsumerData');
 
 const getAllConsumerData = async (req, res) => {
   try {
-    const consumerData = await ConsumerData.find();
+    const { page } = req.query;
+    const limit = 5;
+    const startIndex = (page - 1) * limit;
+    const total = await ConsumerData.countDocuments({});
+    const consumerData = await ConsumerData.find()
+      .limit(limit)
+      .skip(startIndex);
     res.status(200).json({
-      message: 'Consumer data fetched successfully',
       data: consumerData,
       statusCode: 200,
+      message: 'Data Fetched Successfully',
+      totalPages: Math.ceil(total / limit),
+      countDocuments: total,
     });
   } catch (error) {
     res.json({ message: error.message });
