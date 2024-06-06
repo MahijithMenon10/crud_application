@@ -1,14 +1,33 @@
-import { useState } from 'react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
-import { Field, Label, Switch } from '@headlessui/react';
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
-}
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  fetchUserById,
+  addData,
+  updateData,
+} from '../features/data/dataSlice.js';
+import { useParams } from 'react-router-dom';
 
 export const FormView = () => {
-  const [agreed, setAgreed] = useState(false);
+  const dispatch = useDispatch();
+  const { id } = useParams();
+  const { data, status, error } = useSelector((state) => state.data);
 
+  useEffect(() => {
+    if (id === 'new') {
+      dispatch(addData());
+    } else {
+      dispatch(fetchUserById(id));
+    }
+  }, []);
+
+  if (status === 'loading') {
+    return <div>Loading...</div>;
+  }
+
+  if (status === 'failed') {
+    return <div>Error: {error}</div>;
+  }
   return (
     <div className="isolate bg-white px-6 py-24 sm:py-32 lg:px-8">
       <div
@@ -45,6 +64,7 @@ export const FormView = () => {
               type="text"
               name="last-name"
               id="last-name"
+              value={data ? data.name : ''}
               autoComplete="family-name"
               className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
@@ -62,6 +82,7 @@ export const FormView = () => {
               type="date"
               name="company"
               id="company"
+              value={data ? data.dob : ''}
               autoComplete="organization"
               className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
@@ -80,6 +101,7 @@ export const FormView = () => {
               name="email"
               id="email"
               autoComplete="email"
+              value={data ? data.email : ''}
               className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
           </div>
@@ -131,6 +153,7 @@ export const FormView = () => {
               name="message"
               id="message"
               rows={4}
+              value={data ? data.about : ''}
               className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               defaultValue={''}
             />

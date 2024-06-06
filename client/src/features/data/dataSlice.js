@@ -4,13 +4,14 @@ const initialState = {
   data: [],
   status: 'idle',
   error: null,
+  page: 1,
 };
 
-export const fetchUsers = createAsyncThunk('data/fetchUsers', async () => {
+export const fetchUsers = createAsyncThunk('data/fetchUsers', async (page) => {
   const response = await axios.get(
-    'https://crud-application-backend-6e5y.onrender.com/api/fetchUsers'
+    `https://crud-application-backend-6e5y.onrender.com/api/fetchUsers?page=${page}`
   );
-  return response.data;
+  return response.data.data;
 });
 
 export const fetchUserById = createAsyncThunk(
@@ -19,7 +20,8 @@ export const fetchUserById = createAsyncThunk(
     const response = await axios.get(
       `https://crud-application-backend-6e5y.onrender.com/api/fetchuser/${id}`
     );
-    return response.data;
+    console.log(response.data);
+    return response.data.data;
   }
 );
 
@@ -63,6 +65,10 @@ export const dataSlice = createSlice({
   reducers: {
     setData: (state, action) => {
       state.data = action.payload;
+    },
+
+    incrementPage: (state) => {
+      state.page += 1;
     },
 
     fetchDataById: (state, action) => {
@@ -184,12 +190,8 @@ export const dataSlice = createSlice({
 
       .addCase(fetchUserById.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        const index = state.data.findIndex(
-          (item) => item.id === action.payload.id
-        );
-        state.data[index] = action.payload;
+        state.data = action.payload;
       })
-
       .addCase(fetchUserById.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
@@ -197,7 +199,13 @@ export const dataSlice = createSlice({
   },
 });
 
-export const { setData, addData, updateData, deleteData, updatestatus } =
-  dataSlice.actions;
+export const {
+  setData,
+  addData,
+  updateData,
+  deleteData,
+  updatestatus,
+  incrementPage,
+} = dataSlice.actions;
 
 export default dataSlice.reducer;
