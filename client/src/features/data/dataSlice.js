@@ -11,6 +11,7 @@ export const fetchUsers = createAsyncThunk('data/fetchUsers', async (page) => {
   const response = await axios.get(
     `https://crud-application-backend-6e5y.onrender.com/api/fetchUsers?page=${page}`
   );
+  console.log(response.data.data);
   return response.data.data;
 });
 
@@ -67,10 +68,6 @@ export const dataSlice = createSlice({
       state.data = action.payload;
     },
 
-    incrementPage: (state) => {
-      state.page += 1;
-    },
-
     fetchDataById: (state, action) => {
       const index = state.data.findIndex(
         (item) => item.id === action.payload.id
@@ -91,6 +88,10 @@ export const dataSlice = createSlice({
 
     deleteData: (state, action) => {
       state.data = state.data.filter((item) => item.id !== action.payload);
+    },
+
+    setPage: (state, action) => {
+      state.page = action.payload;
     },
 
     updatestatus: (state, action) => {
@@ -206,6 +207,7 @@ export const {
   deleteData,
   updatestatus,
   incrementPage,
+  setPage,
 } = dataSlice.actions;
 
 export default dataSlice.reducer;

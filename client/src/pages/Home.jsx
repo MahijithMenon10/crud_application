@@ -4,18 +4,12 @@ import { fetchUsers } from '../features/data/dataSlice.js';
 import { useNavigate } from 'react-router-dom';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import Modal from 'react-modal';
-import { incrementPage } from '../features/data/dataSlice.js';
 import { CircularPagination } from '../components/Pagination.jsx';
 const Home = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const page = useSelector((state) => state.data.page);
   const { data, status, error } = useSelector((state) => state.data);
   const [isOpen, setIsOpen] = useState(false);
-
-  const fetchNextPage = () => {
-    dispatch(incrementPage());
-  };
 
   const customStyles = {
     content: {
@@ -29,20 +23,6 @@ const Home = () => {
       height: '200px',
     },
   };
-
-  useEffect(() => {
-    if (status === 'idle') {
-      dispatch(fetchUsers(page));
-    }
-  }, [status, dispatch]);
-
-  if (status === 'loading') {
-    return <div>Loading...</div>;
-  }
-
-  if (status === 'failed') {
-    return <div>Error: {error}</div>;
-  }
   return (
     <div className="">
       <button
@@ -155,7 +135,7 @@ const Home = () => {
               );
             })}
           </tbody>
-          <CircularPagination onNext={fetchNextPage} />
+          <CircularPagination />
         </table>
       </div>
     </div>

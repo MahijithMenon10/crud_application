@@ -1,50 +1,54 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { Button, IconButton } from '@material-tailwind/react';
+import { useSelector, useDispatch } from 'react-redux';
+
 import { ArrowRightIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { fetchUsers, setPage } from '../features/data/dataSlice.js';
 
 export function CircularPagination() {
-  const [active, setActive] = React.useState(1);
+  const page = useSelector((state) => state.data.page);
+  const totalPages = useSelector((state) => state.data.numberOfPages);
+  const dispatch = useDispatch();
 
-  const getItemProps = (index) => ({
-    variant: active === index ? 'filled' : 'text',
-    color: 'gray',
-    onClick: () => setActive(index),
+  useEffect(() => {
+    dispatch(fetchUsers(page));
+  }, [dispatch, page]);
+
+  const changePage = (newPage) => {
+    console.log(newPage, totalPages);
+    if (newPage >= 1 && newPage <= totalPages) {
+      dispatch(setPage(newPage));
+      dispatch(fetchUsers(newPage));
+    }
+  };
+
+  const getItemProps = (number) => ({
+    onClick: () => changePage(number),
+    variant: page === number ? 'filled' : 'text',
   });
-
-  const next = () => {
-    if (active === 5) return;
-
-    setActive(active + 1);
-  };
-
-  const prev = () => {
-    if (active === 1) return;
-
-    setActive(active - 1);
-  };
 
   return (
     <div className="flex items-center gap-4">
       <Button
         variant="text"
         className="flex items-center gap-2 rounded-full"
-        onClick={prev}
-        disabled={active === 1}
+        onClick={() => changePage(page - 1)}
+        disabled={page === 1}
       >
         <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" /> Previous
       </Button>
       <div className="flex items-center gap-2">
-        <IconButton {...getItemProps(1)}>1</IconButton>
-        <IconButton {...getItemProps(2)}>2</IconButton>
-        <IconButton {...getItemProps(3)}>3</IconButton>
-        <IconButton {...getItemProps(4)}>4</IconButton>
-        <IconButton {...getItemProps(5)}>5</IconButton>
+        {Array.from({ length: totalPages }, (_, i) => (
+          <IconButton key={i} {...getItemProps(i + 1)}>
+            {i + 1}
+          </IconButton>
+        ))}
       </div>
       <Button
         variant="text"
         className="flex items-center gap-2 rounded-full"
-        onClick={next}
-        disabled={active === 5}
+        onClick={() => changePage(page + 1)}
+        disabled={page === totalPages}
       >
         Next
         <ArrowRightIcon strokeWidth={2} className="h-4 w-4" />
