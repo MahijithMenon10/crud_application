@@ -13,7 +13,7 @@ export const fetchUsers = createAsyncThunk('data/fetchUsers', async (page) => {
   const response = await axios.get(
     `https://crud-application-backend-6e5y.onrender.com/api/fetchUsers?page=${page}`
   );
-  console.log(response.data);
+  console.log(response.data.data);
   return response.data.data;
 });
 
@@ -112,7 +112,7 @@ export const dataSlice = createSlice({
 
       .addCase(fetchUsers.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.data = action.payload;
+        state.data = [...state.data, action.payload];
       })
 
       .addCase(fetchUsers.rejected, (state, action) => {
