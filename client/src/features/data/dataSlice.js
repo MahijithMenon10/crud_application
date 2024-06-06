@@ -5,6 +5,8 @@ const initialState = {
   status: 'idle',
   error: null,
   page: 1,
+  totalPages: 1,
+  countDocuments: 0,
 };
 
 export const fetchUsers = createAsyncThunk('data/fetchUsers', async (page) => {
