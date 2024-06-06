@@ -11,7 +11,6 @@ app.use(bodyParser.json());
 app.use(cors());
 cors({ credentials: true, origin: true });
 app.use(bodyParser.urlencoded({ extended: true }));
-const port = 3000;
 try {
   mongoose.connect(process.env.DB_CONNECT);
   console.log('Connected to MongoDB');

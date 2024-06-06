@@ -7,7 +7,7 @@ import { fetchUsers, setPage } from '../features/data/dataSlice.js';
 
 export function CircularPagination() {
   const page = useSelector((state) => state.data.page);
-  const totalPages = useSelector((state) => state.data);
+  const totalPages = useSelector((state) => state.data.totalPages);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -15,7 +15,6 @@ export function CircularPagination() {
   }, [dispatch, page]);
 
   const changePage = (newPage) => {
-    console.log(newPage, totalPages);
     if (newPage >= 1 && newPage <= totalPages) {
       dispatch(setPage(newPage));
       dispatch(fetchUsers(newPage));

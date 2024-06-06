@@ -14,7 +14,7 @@ export const fetchUsers = createAsyncThunk('data/fetchUsers', async (page) => {
     `https://crud-application-backend-6e5y.onrender.com/api/fetchUsers?page=${page}`
   );
   console.log(response.data.data);
-  return response.data.data;
+  return response.data;
 });
 
 export const fetchUserById = createAsyncThunk(
@@ -112,7 +112,9 @@ export const dataSlice = createSlice({
 
       .addCase(fetchUsers.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.data = action.payload;
+        state.data = action.payload.data;
+        state.countDocuments = action.payload.countDocuments;
+        state.totalPages = action.payload.totalPages;
       })
 
       .addCase(fetchUsers.rejected, (state, action) => {

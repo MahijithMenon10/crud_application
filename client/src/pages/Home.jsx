@@ -22,6 +22,8 @@ const Home = () => {
       transform: 'translate(-50%, -50%)',
       width: '300px',
       height: '200px',
+      zIndex: '1000',
+      background: 'transparent',
     },
   };
   return (
