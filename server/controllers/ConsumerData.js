@@ -11,10 +11,13 @@ const getAllConsumerData = async (req, res) => {
       .limit(LIMIT)
       .skip(startIndex);
     res.json({
-      data: consumerData,
-      currentPage: Number(page),
-      numberOfPages: Math.ceil(total / LIMIT),
-      total,
+      data: {
+        consumerData,
+        total,
+        LIMIT,
+        page,
+        numberOfPages: Math.ceil(total / LIMIT),
+      },
       statusCode: 200,
       message: 'Data Fetched Successfully',
     });
