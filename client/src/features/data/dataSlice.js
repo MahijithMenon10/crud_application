@@ -13,7 +13,7 @@ export const fetchUsers = createAsyncThunk('data/fetchUsers', async (page) => {
   const response = await axios.get(
     `https://crud-application-backend-6e5y.onrender.com/api/fetchUsers?page=${page}`
   );
-  console.log(response.data.data);
+  console.log(response.data);
   return response.data.data;
 });
 

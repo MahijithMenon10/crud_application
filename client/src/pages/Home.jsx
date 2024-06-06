@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchUsers } from '../features/data/dataSlice.js';
+// import { fetchUsers } from '../features/data/dataSlice.js';
 import { useNavigate } from 'react-router-dom';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import Modal from 'react-modal';
 import { CircularPagination } from '../components/Pagination.jsx';
 const Home = () => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const navigate = useNavigate();
   const { data, status, error } = useSelector((state) => state.data);
   const [isOpen, setIsOpen] = useState(false);
+  console.log(data);
 
   const customStyles = {
     content: {
