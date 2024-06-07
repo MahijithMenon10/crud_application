@@ -1,20 +1,35 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { addUsers, fetchUserById } from '../features/user/userSlice';
+import { addUsers } from '../features/data/dataSlice';
+import { fetchUserById } from '../features/user/userSlice';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { useNavigate } from 'react-router-dom';
+import Creatable from 'react-select/creatable';
 import * as Yup from 'yup';
 import { useEffect } from 'react';
+const employmentAge = 18;
 
 const validationSchema = Yup.object({
   name: Yup.string().required('Required'),
   email: Yup.string().email('Invalid email address').required('Required'),
   about: Yup.string().required('Required'),
-  phonenumber: Yup.string().required('Required'),
-  dob: Yup.string().required('Required'),
+  phonenumber: Yup.string()
+    .required('Phone number is required')
+    .matches(/^[0-9]+$/, 'Must be only digits')
+    .min(10, 'Must be exactly 10 digits')
+    .max(10, 'Must be exactly 10 digits'),
+  dob: Yup.date()
+    .required('Required')
+    .max(new Date(2015, 11, 31), 'DOB must be before 2015')
+    .min(
+      new Date(new Date().getFullYear() - employmentAge, 0, 1),
+      `Must be older than ${employmentAge}`
+    ),
   status: Yup.string().required('Required'),
 });
 
 const UserFormView = ({ id }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const user = useSelector((state) => (state.user ? state.user.user : null));
 
   useEffect(() => {
@@ -31,13 +46,14 @@ const UserFormView = ({ id }) => {
         about: user ? user.about : '',
         phonenumber: user ? user.phonenumber : '',
         dob: user ? user.dob : '',
-        status: user ? user.status : '',
+        status: user ? user.status : true,
       }}
       enableReinitialize
       validationSchema={validationSchema}
       onSubmit={(values, { setSubmitting }) => {
         dispatch(addUsers(JSON.stringify(values)));
         setSubmitting(false);
+        navigate('/home');
       }}
     >
       {({ values }) => (
@@ -128,12 +144,17 @@ const UserFormView = ({ id }) => {
             <Field
               as="select"
               name="status"
+              defaultValue={values.status ? values.status : true}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             >
               <option value={true}>Active</option>
               <option value={false}>Inactive</option>
             </Field>
             <ErrorMessage name="status" component="div" />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="skills">Skills</label>
+            <Creatable id="skills" isMulti name="skills" />
           </div>
           <div className="flex items-center justify-between">
             <button

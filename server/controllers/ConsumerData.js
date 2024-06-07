@@ -4,7 +4,6 @@ const ConsumerData = require('../models/ConsumerData');
 const getAllConsumerData = async (req, res) => {
   try {
     const { page, date, status, email, name } = req.query;
-    console.log(req.query);
     const limit = 5;
     const startIndex = (page - 1) * limit;
     let dateFilter = {};
@@ -56,10 +55,22 @@ const getAllConsumerData = async (req, res) => {
     })
       .limit(limit)
       .skip(startIndex);
+
+    const countDocuments = await ConsumerData.countDocuments({
+      ...dateFilter,
+      ...statusFilter,
+      ...emailFilter,
+      ...nameFilter,
+    });
+
+    const totalPages = Math.ceil(countDocuments / limit);
     res.json({
       data: consumerData,
       statusCode: 200,
       message: 'Data Fetched Successfully',
+      page,
+      totalPages,
+      countDocuments,
     });
   } catch (error) {
     res.json({ message: error.message });

@@ -9,6 +9,31 @@ const initialState = {
   countDocuments: 0,
 };
 
+export const updateStatus = createAsyncThunk(
+  'data/updateStatus',
+  async (data) => {
+    const response = await axios.put(
+      `https://crud-application-backend-6e5y.onrender.com/api/statusupdate/${data.id}`,
+      data
+    );
+    return response.data;
+  }
+);
+
+export const addUsers = createAsyncThunk('data/addData', async (data) => {
+  const response = await axios.post(
+    'https://crud-application-backend-6e5y.onrender.com/api/createuser',
+    data,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+
+  return response.data;
+});
+
 export const fetchUsers = createAsyncThunk(
   'data/fetchUsers',
   async ({ page, date, status, email, name }) => {
@@ -24,7 +49,6 @@ export const fetchUsers = createAsyncThunk(
         },
       }
     );
-    console.log(response.data);
     return response.data;
   }
 );
@@ -43,13 +67,6 @@ export const dataSlice = createSlice({
   reducers: {
     setData: (state, action) => {
       state.data = action.payload;
-    },
-
-    fetchDataById: (state, action) => {
-      const index = state.data.findIndex(
-        (item) => item.id === action.payload.id
-      );
-      state.data[index] = action.payload;
     },
 
     addData: (state, action) => {
@@ -88,11 +105,35 @@ export const dataSlice = createSlice({
       .addCase(fetchUsers.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.data = action.payload.data;
-        state.countDocuments = action.payload.countDocuments;
+        state.countDocuments = action.payload.count;
         state.totalPages = action.payload.totalPages;
+        console.log(action.payload);
       })
 
       .addCase(fetchUsers.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      });
+
+    builder
+      .addCase(updateStatus.pending, (state) => {
+        state.status = 'loading';
+      })
+
+      .addCase(updateStatus.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        console.log(action.payload);
+        const index = state.data.findIndex(
+          (item) => item._id === action.payload._id
+        );
+        if (index !== -1) {
+          state.data = state.data.map((item, i) =>
+            i === index ? { ...item, status: action.payload.status } : item
+          );
+        }
+      })
+
+      .addCase(updateStatus.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       });
@@ -114,6 +155,21 @@ export const dataSlice = createSlice({
         state.status = 'failed';
         state.error = action.error.message;
       });
+
+    builder
+      .addCase(addUsers.pending, (state) => {
+        state.status = 'loading';
+      })
+
+      .addCase(addUsers.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.user.push(action.payload);
+      })
+
+      .addCase(addUsers.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      });
   },
 });
 
@@ -122,7 +178,7 @@ export const {
   addData,
   updateData,
   deleteData,
-  incrementPage,
+  updatestatus,
   setPage,
 } = dataSlice.actions;
 
