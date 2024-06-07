@@ -1,11 +1,7 @@
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  fetchUserById,
-  addData,
-  updateData,
-} from '../features/data/dataSlice.js';
+import { addData, updateData, setData } from '../features/data/dataSlice.js';
 import { useParams } from 'react-router-dom';
 
 export const FormView = () => {
@@ -13,13 +9,14 @@ export const FormView = () => {
   const { id } = useParams();
   const { data, status, error } = useSelector((state) => state.data);
 
-  useEffect(() => {
-    if (id === 'new') {
-      dispatch(addData());
-    } else {
-      dispatch(fetchUserById(id));
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (id === 'new') {
+  //     console.log(id);
+  //     dispatch(setData());
+  //   } else {
+  //     dispatch(fetchUserById(id));
+  //   }
+  // }, []);
 
   if (status === 'loading') {
     return <div>Loading...</div>;

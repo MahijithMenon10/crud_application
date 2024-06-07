@@ -9,58 +9,33 @@ const initialState = {
   countDocuments: 0,
 };
 
-export const fetchUsers = createAsyncThunk('data/fetchUsers', async (page) => {
-  const response = await axios.get(
-    `https://crud-application-backend-6e5y.onrender.com/api/fetchUsers?page=${page}`
-  );
-  console.log(response.data.data);
-  return response.data;
-});
-
-export const fetchUserById = createAsyncThunk(
-  'data/fetchUserById',
-  async (id) => {
+export const fetchUsers = createAsyncThunk(
+  'data/fetchUsers',
+  async ({ page, date, status, email, name }) => {
     const response = await axios.get(
-      `https://crud-application-backend-6e5y.onrender.com/api/fetchuser/${id}`
+      `https://crud-application-backend-6e5y.onrender.com/api/fetchUsers`,
+      {
+        params: {
+          page,
+          date,
+          status,
+          email,
+          name,
+        },
+      }
     );
     console.log(response.data);
-    return response.data.data;
-  }
-);
-
-export const addUsers = createAsyncThunk('data/addData', async (data) => {
-  const response = await axios.post(
-    'https://crud-application-backend-6e5y.onrender.com/data/createuser',
-    data
-  );
-  return response.data;
-});
-
-export const updateUsers = createAsyncThunk('data/updateData', async (data) => {
-  const response = await axios.put(
-    `https://crud-application-backend-6e5y.onrender.com/data/updateuser/${data.id}`,
-    data
-  );
-  return response.data;
-});
-
-export const deleteUsers = createAsyncThunk('data/deleteData', async (id) => {
-  await axios.delete(
-    `https://crud-application-backend-6e5y.onrender.com/data/deleteuser/${id}`
-  );
-  return id;
-});
-
-export const updateStatus = createAsyncThunk(
-  'data/updateStatus',
-  async (data) => {
-    const response = await axios.put(
-      `https://crud-application-backend-6e5y.onrender.com/data/statusupdate/${data.id}`,
-      data
-    );
     return response.data;
   }
 );
+
+export const updateUsers = createAsyncThunk('data/updateData', async (data) => {
+  const response = await axios.put(
+    `https://crud-application-backend-6e5y.onrender.com/api/updateuser/${data.id}`,
+    data
+  );
+  return response.data;
+});
 
 export const dataSlice = createSlice({
   name: 'data',
@@ -123,21 +98,6 @@ export const dataSlice = createSlice({
       });
 
     builder
-      .addCase(addUsers.pending, (state) => {
-        state.status = 'loading';
-      })
-
-      .addCase(addUsers.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.data.push(action.payload);
-      })
-
-      .addCase(addUsers.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
-      });
-
-    builder
       .addCase(updateUsers.pending, (state) => {
         state.status = 'loading';
       })
@@ -154,53 +114,6 @@ export const dataSlice = createSlice({
         state.status = 'failed';
         state.error = action.error.message;
       });
-
-    builder
-      .addCase(deleteUsers.pending, (state) => {
-        state.status = 'loading';
-      })
-
-      .addCase(deleteUsers.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.data = state.data.filter((item) => item.id !== action.payload);
-      })
-
-      .addCase(deleteUsers.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
-      });
-
-    builder
-      .addCase(updateStatus.pending, (state) => {
-        state.status = 'loading';
-      })
-
-      .addCase(updateStatus.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        const index = state.data.findIndex(
-          (item) => item.id === action.payload.id
-        );
-        state.data[index].status = action.payload.status;
-      })
-
-      .addCase(updateStatus.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
-      });
-
-    builder
-      .addCase(fetchUserById.pending, (state) => {
-        state.status = 'loading';
-      })
-
-      .addCase(fetchUserById.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.data = action.payload;
-      })
-      .addCase(fetchUserById.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
-      });
   },
 });
 
@@ -209,7 +122,6 @@ export const {
   addData,
   updateData,
   deleteData,
-  updatestatus,
   incrementPage,
   setPage,
 } = dataSlice.actions;

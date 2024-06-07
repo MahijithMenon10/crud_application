@@ -3,19 +3,63 @@ const ConsumerData = require('../models/ConsumerData');
 
 const getAllConsumerData = async (req, res) => {
   try {
-    const { page } = req.query;
+    const { page, date, status, email, name } = req.query;
+    console.log(req.query);
     const limit = 5;
     const startIndex = (page - 1) * limit;
-    const total = await ConsumerData.countDocuments({});
-    const consumerData = await ConsumerData.find()
+    let dateFilter = {};
+    const today = new Date();
+    if (date === 'Today') {
+      dateFilter = {
+        createdAt: {
+          $gte: new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate(),
+            0,
+            0,
+            0,
+            0
+          ),
+          $lt: new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate(),
+            23,
+            59,
+            59,
+            999
+          ),
+        },
+      };
+    } else if (date === 'This week') {
+      const firstDayOfWeek = today.getDate() - today.getDay();
+      const lastDayOfWeek = firstDayOfWeek + 6;
+      dateFilter = {
+        $gte: new Date(today.setDate(firstDayOfWeek)),
+        $lt: new Date(today.setDate(lastDayOfWeek)),
+      };
+    } else if (date === 'this month') {
+      dateFilter = {
+        $gte: new Date(today.getFullYear(), today.getMonth(), 1),
+        $lt: new Date(today.getFullYear(), today.getMonth() + 1, 0),
+      };
+    }
+    const statusFilter = status ? { status: status === 'true' } : {};
+    const emailFilter = email ? { email } : {};
+    const nameFilter = name ? { name: { $regex: new RegExp(name, 'i') } } : {};
+    const consumerData = await ConsumerData.find({
+      ...dateFilter,
+      ...statusFilter,
+      ...emailFilter,
+      ...nameFilter,
+    })
       .limit(limit)
       .skip(startIndex);
-    res.status(200).json({
+    res.json({
       data: consumerData,
       statusCode: 200,
       message: 'Data Fetched Successfully',
-      totalPages: Math.ceil(total / limit),
-      countDocuments: total,
     });
   } catch (error) {
     res.json({ message: error.message });
@@ -82,81 +126,6 @@ const deleteConsumerData = async (req, res) => {
 
   res.json({ message: 'Consumer data deleted successfully.' });
 };
-
-// const searchConsumerData = async (req, res) => {
-//   const { name, email, date, isActive } = req.query;
-//   let startDate, endDate;
-//   const filteredData = [];
-
-//   if (name) {
-//     filteredData.push({ $match: { name: name } });
-//   }
-//   if (email) {
-//     filteredData.push({ $match: { email: email } });
-//   }
-//   if (isActive !== undefined) {
-//     filteredData.push({ $match: { status: isActive } });
-//   }
-
-//   if (date === 'This Month') {
-//     const today = new Date();
-//     startDate = new Date(today.getFullYear(), today.getMonth(), 1);
-//     endDate = new Date(
-//       today.getFullYear(),
-//       today.getMonth() + 1,
-//       0,
-//       23,
-//       59,
-//       59,
-//       999
-//     );
-//   }
-//   if (date === 'Today') {
-//     const today = new Date();
-//     startDate = new Date(
-//       today.getFullYear(),
-//       today.getMonth(),
-//       today.getDate(),
-//       0,
-//       0,
-//       0,
-//       0
-//     );
-//     endDate = new Date(
-//       today.getFullYear(),
-//       today.getMonth(),
-//       today.getDate(),
-//       23,
-//       59,
-//       59,
-//       999
-//     );
-//   }
-
-//   if (date === 'This Year') {
-//     const today = new Date();
-//     startDate = new Date(today.getFullYear(), 0, 1, 0, 0, 0, 0);
-//     endDate = new Date(today.getFullYear(), 11, 31, 23, 59, 59, 999);
-//   }
-
-//   if (startDate && endDate) {
-//     filteredData.push({
-//       $match: {
-//         createdAt: {
-//           $gte: startDate,
-//           $lt: endDate,
-//         },
-//       },
-//     });
-//   }
-
-//   try {
-//     const result = await ConsumerData.aggregate(filteredData);
-//     res.json({ statusCode: 201, message: 'Search Successful', data: result });
-//   } catch (err) {
-//     res.json({ message: err.message });
-//   }
-// };
 
 const updateConsumerStatusData = async (req, res) => {
   const { id } = req.params;

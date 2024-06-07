@@ -1,28 +1,54 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-// import { fetchUsers } from '../features/data/dataSlice.js';
+import Switch from 'react-switch';
 import { useNavigate } from 'react-router-dom';
+import { fetchUsers } from '../features/data/dataSlice.js';
+import { updateStatus } from '../features/user/userSlice.js';
+
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import Modal from 'react-modal';
 import { CircularPagination } from '../components/Pagination.jsx';
 const Home = () => {
-  // const dispatch = useDispatch();
+  useEffect(() => {
+    Modal.setAppElement('#root');
+  }, []);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { data, status, error } = useSelector((state) => state.data);
-  const [isOpen, setIsOpen] = useState(false);
-  console.log(data);
+  const { data } = useSelector((state) => state.data);
+  const [isOpen, setIsOpen] = useState(null);
+
+  const [nameFilter, setNameFilter] = useState('');
+  const [emailFilter, setEmailFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [dateFilter, setDateFilter] = useState('');
+
+  const handleSwitchChange = (userId) => (checked) => {
+    dispatch(updateStatus({ id: userId, status: checked }));
+  };
+
+  const handleSearch = () => {
+    navigate('');
+    dispatch(
+      fetchUsers({
+        name: nameFilter,
+        email: emailFilter,
+        status: statusFilter,
+        date: dateFilter,
+      })
+    );
+  };
 
   const customStyles = {
     content: {
       top: '50%',
-      left: '75%',
+      left: '95%',
       right: 'auto',
       bottom: 'auto',
       marginRight: '-50%',
       transform: 'translate(-50%, -50%)',
-      width: '300px',
-      height: '200px',
-      zIndex: '1000',
+      width: '200px',
+      height: '100px',
+      zIndex: '-1000',
       background: 'transparent',
     },
   };
@@ -31,7 +57,7 @@ const Home = () => {
       <button
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2"
         type="button"
-        onClick={() => navigate('/view/new')}
+        onClick={() => navigate('/addUser')}
       >
         Add Users
       </button>
@@ -40,27 +66,41 @@ const Home = () => {
         <input
           className="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none flex-auto m-2"
           placeholder="Search by name..."
+          value={nameFilter}
+          onChange={(e) => setNameFilter(e.target.value)}
         />
 
         <input
           className="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none text-red-900 flex-auto m-2"
           placeholder="Search by email..."
+          value={emailFilter}
+          onChange={(e) => setEmailFilter(e.target.value)}
         />
 
-        <select className="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none flex-auto m-2">
-          <option>Active</option>
-          <option>Inactive</option>
+        <select
+          className="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none flex-auto m-2"
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+        >
+          <option value="">All</option>
+          <option value="true">Active</option>
+          <option value="false">Inactive</option>
         </select>
 
-        <select className="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none flex-auto m-2">
-          <option>Today</option>
-          <option>This Week</option>
-          <option>This Month</option>
+        <select
+          className="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none flex-auto m-2"
+          value={dateFilter}
+          onChange={(e) => setDateFilter(e.target.value)}
+        >
+          <option value="">All</option>
+          <option value="Today">Today</option>
+          <option value="this week">This Week</option>
+          <option value="This month">This Month</option>
         </select>
-
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2 flex-auto"
           type="button"
+          onClick={handleSearch}
         >
           Search
         </button>
@@ -105,34 +145,46 @@ const Home = () => {
                     </div>
                   </td>
                   <td className="whitespace-nowrap">
-                    <div className="text-sm text-gray-900">
-                      {item.status + ''}
-                    </div>
+                    {/* <div key={item._id} className="text-sm text-gray-900">
+                      <Switch
+                        onChange={handleSwitchChange(item.id)}
+                        checked={item.status}
+                      />
+                    </div> */}
                   </td>
                   <td className="whitespace-nowrap text-right text-sm font-medium">
-                    <button onClick={() => setIsOpen((prev) => !prev)}>
+                    <button onClick={() => setIsOpen(item._id)}>
                       <BsThreeDotsVertical />
                     </button>
-                    <Modal
-                      isOpen={isOpen}
-                      style={customStyles}
-                      onRequestClose={() => console.log('close')}
-                    >
-                      <div className="flex flex-col">
-                        <button
-                          className="text-red-500"
-                          onClick={() => navigate(`/view/${item._id}`)}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          className="text-red-500"
-                          onClick={() => navigate(`/view/${item._id}`)}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </Modal>
+                    <div>
+                      <Modal
+                        isOpen={isOpen === item._id}
+                        style={customStyles}
+                        onRequestClose={() => setIsOpen(null)}
+                        ariaHideApp={false}
+                      >
+                        <div className="flex flex-col">
+                          <button
+                            className="text-red-500"
+                            onClick={() => navigate(`view/${item._id}`)}
+                          >
+                            View
+                          </button>
+                          <button
+                            className="text-red-500"
+                            onClick={() => navigate(`/edit/${item._id}`)}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            className="text-red-500"
+                            onClick={() => navigate(`/delete/${item._id}`)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </Modal>
+                    </div>
                   </td>
                 </tr>
               );

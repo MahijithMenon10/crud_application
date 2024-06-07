@@ -1,4 +1,4 @@
-import { fetchUserById } from '../features/data/dataSlice';
+import { fetchUserById } from '../features/user/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { useEffect } from 'react';
