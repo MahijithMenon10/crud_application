@@ -1,5 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   data: [],
   status: 'idle',
@@ -8,59 +7,12 @@ const initialState = {
   totalPages: 1,
   countDocuments: 0,
 };
-
-export const updateStatus = createAsyncThunk(
-  'data/updateStatus',
-  async (data) => {
-    const response = await axios.put(
-      `https://crud-application-backend-6e5y.onrender.com/api/statusupdate/${data.id}`,
-      data
-    );
-    return response.data;
-  }
-);
-
-export const addUsers = createAsyncThunk('data/addData', async (data) => {
-  const response = await axios.post(
-    'https://crud-application-backend-6e5y.onrender.com/api/createuser',
-    data,
-    {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  );
-
-  return response.data;
-});
-
-export const fetchUsers = createAsyncThunk(
-  'data/fetchUsers',
-  async ({ page, date, status, email, name }) => {
-    const response = await axios.get(
-      `https://crud-application-backend-6e5y.onrender.com/api/fetchUsers`,
-      {
-        params: {
-          page,
-          date,
-          status,
-          email,
-          name,
-        },
-      }
-    );
-    return response.data;
-  }
-);
-
-export const updateUsers = createAsyncThunk('data/updateData', async (data) => {
-  const response = await axios.put(
-    `https://crud-application-backend-6e5y.onrender.com/api/updateuser/${data.id}`,
-    data
-  );
-  return response.data;
-});
-
+import {
+  fetchUsers,
+  updateStatus,
+  updateUsers,
+  addUsers,
+} from '../actions/dataActions.js';
 export const dataSlice = createSlice({
   name: 'data',
   initialState,
@@ -163,7 +115,7 @@ export const dataSlice = createSlice({
 
       .addCase(addUsers.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.user.push(action.payload);
+        state.data.push(action.payload);
       })
 
       .addCase(addUsers.rejected, (state, action) => {

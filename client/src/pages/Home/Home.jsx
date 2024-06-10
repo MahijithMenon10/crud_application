@@ -1,17 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Switch from 'react-switch';
 import { useNavigate } from 'react-router-dom';
-import { fetchUsers } from '../features/data/dataSlice.js';
-import { updateStatus } from '../features/data/dataSlice';
+import { updateStatus } from '../../redux/actions/dataActions';
+import { fetchUsers } from '../../redux/actions/dataActions';
 
 import { BsThreeDotsVertical } from 'react-icons/bs';
-import Modal from 'react-modal';
-import { CircularPagination } from '../components/Pagination.jsx';
+// import { CircularPagination } from '../components/Pagination.jsx';
 const Home = () => {
-  useEffect(() => {
-    Modal.setAppElement('#root');
-  }, []);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { data } = useSelector((state) => state.data);
@@ -41,25 +37,6 @@ const Home = () => {
     );
   };
 
-  const customStyles = {
-    content: {
-      top: '50%',
-      left: '75%',
-      right: 'auto',
-      bottom: 'auto',
-      marginRight: '-50%',
-      transform: 'translate(-50%, -50%)',
-      width: '200px',
-      height: '200px',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'space-around',
-      alignItems: 'center',
-      borderRadius: '10px',
-      padding: '20px',
-      backgroundColor: '#f3f4f6',
-    },
-  };
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
@@ -166,35 +143,13 @@ const Home = () => {
                     <button onClick={() => setIsOpen(item._id)}>
                       <BsThreeDotsVertical />
                     </button>
-                    <div>
-                      <Modal
-                        isOpen={isOpen === item._id}
-                        style={customStyles}
-                        onRequestClose={() => setIsOpen(null)}
-                        ariaHideApp={false}
-                      >
-                        <div className="flex flex-col space-y-4">
-                          <button
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                            onClick={() => navigate(`/view/${item._id}`)}
-                          >
-                            View
-                          </button>
-                          <button
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                            onClick={() => navigate(`/edit/${item._id}`)}
-                          >
-                            Edit
-                          </button>
-                          <button
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                            onClick={() => navigate(`/delete/${item._id}`)}
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </Modal>
-                    </div>
+                    {isOpen === item._id && (
+                      <div className="absolute  bg-white shadow-lg p-4">
+                        <p onClick={{}}>View</p>
+                        <p onClick={{}}>Edit</p>
+                        <p onClick={{}}>Delete</p>
+                      </div>
+                    )}
                   </td>
                 </tr>
               );
@@ -202,7 +157,7 @@ const Home = () => {
           </tbody>
         </table>
       </div>
-      <CircularPagination />
+      {/* <CircularPagination /> */}
     </div>
   );
 };

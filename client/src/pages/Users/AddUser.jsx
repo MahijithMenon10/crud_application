@@ -1,12 +1,11 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { addUsers } from '../features/data/dataSlice';
-import { fetchUserById } from '../features/user/userSlice';
+import { addUsers } from '../../redux/actions/dataActions';
+import { fetchUserById } from '../../redux/actions/userActions';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import Creatable from 'react-select/creatable';
 import * as Yup from 'yup';
 import { useEffect } from 'react';
-const employmentAge = 18;
 
 const validationSchema = Yup.object({
   name: Yup.string().required('Required'),
@@ -19,11 +18,7 @@ const validationSchema = Yup.object({
     .max(10, 'Must be exactly 10 digits'),
   dob: Yup.date()
     .required('Required')
-    .max(new Date(2015, 11, 31), 'DOB must be before 2015')
-    .min(
-      new Date(new Date().getFullYear() - employmentAge, 0, 1),
-      `Must be older than ${employmentAge}`
-    ),
+    .max(new Date(), 'DOB must be before today'),
   status: Yup.string().required('Required'),
 });
 
@@ -53,7 +48,7 @@ const UserFormView = ({ id }) => {
       onSubmit={(values, { setSubmitting }) => {
         dispatch(addUsers(JSON.stringify(values)));
         setSubmitting(false);
-        navigate('/home');
+        navigate('/');
       }}
     >
       {({ values }) => (

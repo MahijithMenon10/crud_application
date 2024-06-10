@@ -10,11 +10,12 @@ const {
   updateConsumerStatusData,
 } = require('../controllers/ConsumerData');
 
-router.get('/fetchUsers', getAllConsumerData);
-router.get('/fetchuser/:id', getConsumerDataById);
-router.post('/createuser', createConsumerData);
-router.put('/updateuser/:id', updateConsumerData);
-router.delete('/deleteuser/:id', deleteConsumerData);
-router.put('/statusupdate/:id', updateConsumerStatusData);
+router
+  .get('/fetchUsers', getAllConsumerData)
+  .get('/fetchuser/:id', getConsumerDataById)
+  .post('/createuser', createConsumerData)
+  .put('/updateuser/:id', updateConsumerData)
+  .delete('/deleteuser/:id', deleteConsumerData)
+  .put('/statusupdate/:id', updateConsumerStatusData);
 
 module.exports = router;

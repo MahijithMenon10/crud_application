@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
 import ReactPaginate from 'react-paginate';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchUsers, setPage } from '../features/data/dataSlice.js';
-
+import { fetchUsers, setPage } from '../redux/slices/dataSlice';
 export function CircularPagination() {
   const page = useSelector((state) => state.data.page);
   const totalPages = useSelector((state) => state.data.totalPages);
