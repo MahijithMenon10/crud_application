@@ -1,10 +1,11 @@
 import axios from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+const BASE_URL = `https://crud-application-backend-6e5y.onrender.com/api`;
 export const updateStatus = createAsyncThunk(
   'data/updateStatus',
   async (data) => {
     const response = await axios.put(
-      `https://crud-application-backend-6e5y.onrender.com/api/statusupdate/${data.id}`,
+      `${BASE_URL}/statusupdate/${data.id}`,
       data
     );
     return response.data;
@@ -12,15 +13,11 @@ export const updateStatus = createAsyncThunk(
 );
 
 export const addUsers = createAsyncThunk('data/addData', async (data) => {
-  const response = await axios.post(
-    'https://crud-application-backend-6e5y.onrender.com/api/createuser',
-    data,
-    {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  );
+  const response = await axios.post(`${BASE_URL}/createuser`, data, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 
   return response.data;
 });
@@ -45,9 +42,6 @@ export const fetchUsers = createAsyncThunk(
 );
 
 export const updateUsers = createAsyncThunk('data/updateData', async (data) => {
-  const response = await axios.put(
-    `https://crud-application-backend-6e5y.onrender.com/api/updateuser/${data.id}`,
-    data
-  );
+  const response = await axios.put(`${BASE_URL}/updateuser/${data.id}`, data);
   return response.data;
 });

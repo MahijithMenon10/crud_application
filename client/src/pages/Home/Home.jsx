@@ -1,14 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Switch from 'react-switch';
 import { useNavigate } from 'react-router-dom';
 import { updateStatus } from '../../redux/actions/dataActions';
 import { fetchUsers } from '../../redux/actions/dataActions';
+import { useSearchParams } from 'react-router-dom';
 
 import { BsThreeDotsVertical } from 'react-icons/bs';
 // import { CircularPagination } from '../components/Pagination.jsx';
 const Home = () => {
   const dispatch = useDispatch();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { data } = useSelector((state) => state.data);
   const [isOpen, setIsOpen] = useState(null);
@@ -21,6 +23,18 @@ const Home = () => {
   const handleSwitchChange = (userId) => (checked) => {
     dispatch(updateStatus({ id: userId, status: checked }));
   };
+
+  useEffect(() => {
+    const name = searchParams.get('name') || '';
+    const email = searchParams.get('email') || '';
+    const status = searchParams.get('status') || '';
+    const date = searchParams.get('date') || '';
+    setNameFilter(name);
+    setEmailFilter(email);
+    setStatusFilter(status);
+    setDateFilter(date);
+    dispatch(fetchUsers({ name, email, status, date }));
+  }, [dispatch, searchParams]);
 
   const handleSearch = () => {
     navigate(

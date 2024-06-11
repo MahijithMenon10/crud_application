@@ -45,7 +45,9 @@ const getAllConsumerData = async (req, res) => {
       };
     }
     const statusFilter = status ? { status: status === 'true' } : {};
-    const emailFilter = email ? { email } : {};
+    const emailFilter = email
+      ? { email: { $regex: new RegExp(email, 'i') } }
+      : {};
     const nameFilter = name ? { name: { $regex: new RegExp(name, 'i') } } : {};
     const consumerData = await ConsumerData.find({
       ...dateFilter,
