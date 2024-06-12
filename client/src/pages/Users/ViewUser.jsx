@@ -9,6 +9,7 @@ const ViewUser = () => {
 
   const userState = useSelector((state) => state.user);
   console.log(userState);
+
   const { user, status, error } = userState || {};
 
   useEffect(() => {
@@ -29,7 +30,7 @@ const ViewUser = () => {
 
   return (
     <div className="flex flex-col items-center justify-center space-y-6 p-6 bg-gray-100 min-h-screen">
-      <div className="flex flex-col items-start space-y-4 bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+      <div className="flex flex-col items-start space-y-4 bg-white p-6 rounded-lg shadow-lg w-full max-w-md lg:max-w-lg">
         <h1 className="font-bold text-2xl text-blue-500">User Details</h1>
         <div className="flex flex-col space-y-1 w-full">
           <label className="font-bold text-lg text-gray-700">Name</label>

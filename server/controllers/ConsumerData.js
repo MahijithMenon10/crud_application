@@ -1,76 +1,18 @@
 const mongoose = require('mongoose');
 const ConsumerData = require('../models/ConsumerData');
-
+const consumerDataService = require('../services/consumerDataService');
 const getAllConsumerData = async (req, res) => {
   try {
-    const { page, date, status, email, name } = req.query;
-    const limit = 5;
-    const startIndex = (page - 1) * limit;
-    let dateFilter = {};
-    const today = new Date();
-    if (date === 'Today') {
-      dateFilter = {
-        createdAt: {
-          $gte: new Date(
-            today.getFullYear(),
-            today.getMonth(),
-            today.getDate(),
-            0,
-            0,
-            0,
-            0
-          ),
-          $lt: new Date(
-            today.getFullYear(),
-            today.getMonth(),
-            today.getDate(),
-            23,
-            59,
-            59,
-            999
-          ),
-        },
-      };
-    } else if (date === 'This week') {
-      const firstDayOfWeek = today.getDate() - today.getDay();
-      const lastDayOfWeek = firstDayOfWeek + 6;
-      dateFilter = {
-        $gte: new Date(today.setDate(firstDayOfWeek)),
-        $lt: new Date(today.setDate(lastDayOfWeek)),
-      };
-    } else if (date === 'this month') {
-      dateFilter = {
-        $gte: new Date(today.getFullYear(), today.getMonth(), 1),
-        $lt: new Date(today.getFullYear(), today.getMonth() + 1, 0),
-      };
-    }
-    const statusFilter = status ? { status: status === 'true' } : {};
-    const emailFilter = email
-      ? { email: { $regex: new RegExp(email, 'i') } }
-      : {};
-    const nameFilter = name ? { name: { $regex: new RegExp(name, 'i') } } : {};
-    const consumerData = await ConsumerData.find({
-      ...dateFilter,
-      ...statusFilter,
-      ...emailFilter,
-      ...nameFilter,
-    })
-      .limit(limit)
-      .skip(startIndex);
-
-    const countDocuments = await ConsumerData.countDocuments({
-      ...dateFilter,
-      ...statusFilter,
-      ...emailFilter,
-      ...nameFilter,
-    });
-
-    const totalPages = Math.ceil(countDocuments / limit);
+    const consumerData = await consumerDataService.getConsumerData(req.query);
+    const countDocuments = await consumerDataService.getCountDocuments(
+      req.query
+    );
+    const totalPages = Math.ceil(countDocuments / 5);
     res.json({
       data: consumerData,
       statusCode: 200,
       message: 'Data Fetched Successfully',
-      page,
+      page: req.query.page,
       totalPages,
       countDocuments,
     });

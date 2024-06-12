@@ -1,7 +1,8 @@
 const appRoutes = {
   HOME: '/',
-  VIEWUSER: '/viewuser',
+  VIEWUSER: '/viewuser/:id',
   ADDUSER: '/adduser',
+  EDITUSER: '/edituser/:id',
   UNKNOWN: '*',
 };
 

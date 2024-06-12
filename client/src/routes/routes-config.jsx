@@ -14,6 +14,10 @@ const routeConfig = [
     element: <ViewUser />,
   },
   {
+    path: appRoutes.EDITUSER,
+    element: <AddUser />,
+  },
+  {
     path: appRoutes.ADDUSER,
     element: <AddUser />,
   },
