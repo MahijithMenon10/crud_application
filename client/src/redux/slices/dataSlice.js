@@ -13,6 +13,7 @@ import {
   updateUsers,
   addUsers,
 } from '../actions/dataActions.js';
+import { deleteUser } from '../actions/userActions.js';
 export const dataSlice = createSlice({
   name: 'data',
   initialState,
@@ -122,6 +123,10 @@ export const dataSlice = createSlice({
         state.status = 'failed';
         state.error = action.error.message;
       });
+
+    builder.addCase(deleteUser.fulfilled, (state, action) => {
+      state.data = state.data.filter((item) => item.id !== action.payload);
+    });
   },
 });
 
