@@ -1,37 +1,38 @@
-import { useEffect } from 'react';
 import ReactPaginate from 'react-paginate';
+import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchUsers, setPage } from '../redux/slices/dataSlice';
+
+import { setPage } from '../redux/slices/dataSlice';
 export function CircularPagination() {
-  const page = useSelector((state) => state.data.page);
+  const navigate = useNavigate();
   const totalPages = useSelector((state) => state.data.totalPages);
   const dispatch = useDispatch();
-  console.log(totalPages);
-
-  useEffect(() => {
-    dispatch(fetchUsers(page));
-  }, [dispatch, page]);
 
   const handlePageClick = (event) => {
-    dispatch(setPage(event.selected));
+    dispatch(setPage(event.selected + 1));
+    navigate(`?page=${event.selected + 1}`);
   };
 
   return (
     <ReactPaginate
       breakLabel="..."
-      nextLabel="next"
+      nextLabel=">"
+      previousLabel="<"
       onPageChange={handlePageClick}
-      pageRangeDisplayed={3} // Number of pages displayed in the middle
-      marginPagesDisplayed={1} // Number of pages displayed at the beginning and end
       pageCount={totalPages}
-      previousLabel="prev"
-      renderOnZeroPageCount={null}
-      containerClassName="flex justify-center mt-4"
-      pageClassName="mx-1 px-3 py-2 border border-blue-500 rounded-md cursor-pointer hover:bg-blue-500 hover:text-white"
+      pageRangeDisplayed={5}
+      marginPagesDisplayed={2}
+      containerClassName="flex justify-center my-4 space-x-2"
+      pageClassName="w-8 h-8 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-200"
+      activeLinkClassName="bg-blue-500 text-white"
+      breakClassName="w-8 h-8 flex items-center justify-center border border-gray-300 rounded"
+      nextClassName="w-8 h-8 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-200"
+      previousClassName="w-8 h-8 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-200"
+      previousLinkClassName="block w-full h-full flex items-center justify-center text-blue-500 hover:bg-blue-500 hover:text-white"
+      nextLinkClassName="block w-full h-full flex items-center justify-center text-blue-500 hover:bg-blue-500 hover:text-white"
+      pageLinkClassName="block w-full h-full flex items-center justify-center text-blue-500 hover:bg-blue-500 hover:text-white"
       activeClassName="bg-blue-500 text-white"
-      previousClassName="mx-1 px-3 py-2 border border-blue-500 rounded-md cursor-pointer hover:bg-blue-500 hover:text-white"
-      nextClassName="mx-1 px-3 py-2 border border-blue-500 rounded-md cursor-pointer hover:bg-blue-500 hover:text-white"
-      breakClassName="mx-1 px-3 py-2 border border-blue-500 rounded-md cursor-pointer hover:bg-blue-500 hover:text-white"
+      disabledClassName="opacity-50 cursor-not-allowed"
     />
   );
 }
