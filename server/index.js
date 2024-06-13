@@ -9,14 +9,7 @@ dotenv.config();
 
 const app = express();
 app.use(bodyParser.json());
-app.use(
-  cors({
-    origin: [
-      'http://localhost:5173',
-      'https://crud-application-psi.vercel.app/',
-    ],
-  })
-);
+app.use(cors({ origin: true }));
 cors({ credentials: true, origin: true });
 app.use(bodyParser.urlencoded({ extended: true }));
 connectDB();
