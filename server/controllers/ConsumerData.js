@@ -26,7 +26,6 @@ const getConsumerDataById = async (req, res) => {
     return res.json({ message: 'Invalid id provided', statusCode: 404 });
 
   const consumerData = await consumerDataService.getConsumerDataById(id);
-  // res.json(consumerData);
   res.json({
     data: consumerData,
     message: 'Consumer Data Fetched By Id Successfully',
