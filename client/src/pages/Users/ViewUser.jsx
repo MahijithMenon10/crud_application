@@ -8,7 +8,6 @@ const ViewUser = () => {
   const { id } = useParams();
 
   const userState = useSelector((state) => state.user);
-  console.log(userState);
 
   const { user, status, error } = userState || {};
 
@@ -34,47 +33,29 @@ const ViewUser = () => {
         <h1 className="font-bold text-2xl text-blue-500">User Details</h1>
         <div className="flex flex-col space-y-1 w-full">
           <label className="font-bold text-lg text-gray-700">Name</label>
-          <input
-            className="border border-gray-300 p-2 rounded-lg"
-            type="text"
-            value={user.name}
-            readOnly
-          />
+          <p className="text-gray-600">{user.name}</p>
         </div>
         <div className="flex flex-col space-y-1 w-full">
           <label className="font-bold text-lg text-gray-700">Email</label>
-          <input
-            className="border border-gray-300 p-2 rounded-lg"
-            type="email"
-            value={user.email}
-            readOnly
-          />
+          <p className="text-gray-600">{user.email}</p>
         </div>
         <div className="flex flex-col space-y-1 w-full">
           <label className="font-bold text-lg text-gray-700">Phone</label>
-          <input
-            className="border border-gray-300 p-2 rounded-lg"
-            type="tel"
-            value={user.phoneNumber}
-            readOnly
-          />
+          <p className="text-gray-600">{user.phoneNumber}</p>
         </div>
         <div className="flex flex-col space-y-1 w-full">
           <label className="font-bold text-lg text-gray-700">About</label>
-          <textarea
-            className="border border-gray-300 p-2 rounded-lg"
-            value={user.about}
-            readOnly
-          />
+          <p className="text-gray-600">{user.about}</p>
         </div>
         <div className="flex flex-col space-y-1 w-full">
           <label className="font-bold text-lg text-gray-700">Status</label>
-          <input
-            className="border border-gray-300 p-2 rounded-lg"
-            type="text"
-            value={user.status + ''}
-            readOnly
-          />
+          <p className="text-gray-600">{user.status ? 'Active' : 'Inactive'}</p>
+        </div>
+        <div className="flex flex-col space-y-1 w-full">
+          <label className="font-bold text-lg text-gray-700">DOB</label>
+          <p className="text-gray-600">
+            {new Date(user.dob).toLocaleDateString()}
+          </p>
         </div>
       </div>
     </div>
