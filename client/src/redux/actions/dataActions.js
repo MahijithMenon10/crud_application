@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-const BASE_URL = `https://crud-application-backend-6e5y.onrender.com/api`;
+const BASE_URL = `https://crud-application-9hzn.onrender.com/api`;
 // const BASE_URL = `http://localhost:5000/api`;
 
 export const updateStatus = createAsyncThunk(

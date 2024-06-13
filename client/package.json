@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "proxy": "https://crud-application-backend-6e5y.onrender.com",
+  "proxy": "https://crud-application-9hzn.onrender.com",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
