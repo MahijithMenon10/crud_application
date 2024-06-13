@@ -167,7 +167,7 @@ const UserFormView = () => {
                 />
 
                 <ErrorMessage
-                  name="phonenumber"
+                  name="phoneNumber"
                   component="div"
                   className="text-red-500 text-xs italic"
                 />
