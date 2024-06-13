@@ -2,6 +2,7 @@ const ConsumerData = require('../models/ConsumerData');
 
 const getConsumerData = async ({ page, date, status, email, name }) => {
   const limit = 5;
+  const extraDataLimit = 5;
   const startIndex = (page - 1) * limit;
   let dateFilter = {};
   const today = new Date();
@@ -52,7 +53,7 @@ const getConsumerData = async ({ page, date, status, email, name }) => {
     ...emailFilter,
     ...nameFilter,
   })
-    .limit(limit)
+    .limit(limit + extraDataLimit)
     .skip(startIndex);
 
   return consumerData;
@@ -77,7 +78,13 @@ const getCountDocuments = async ({ date, status, email, name }) => {
   return countDocuments;
 };
 
+const getConsumerDataById = async (id) => {
+  const consumerData = await ConsumerData.findById(id);
+  return consumerData;
+};
+
 module.exports = {
   getConsumerData,
   getCountDocuments,
+  getConsumerDataById,
 };
