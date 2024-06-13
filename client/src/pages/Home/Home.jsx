@@ -109,6 +109,7 @@ const Home = () => {
                 data.map((item) => {
                   return (
                     <tr key={item._id}>
+                      {console.log(item)}
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">{item.name}</div>
                       </td>

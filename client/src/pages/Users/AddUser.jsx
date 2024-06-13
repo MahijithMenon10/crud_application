@@ -5,7 +5,7 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import { useNavigate, useParams } from 'react-router-dom';
 import * as Yup from 'yup';
 import { useEffect } from 'react';
-// Validation schema for the form
+
 const validationSchema = Yup.object({
   name: Yup.string()
     .required('Required')
@@ -29,10 +29,9 @@ const validationSchema = Yup.object({
   dob: Yup.date()
     .required('Required')
     .max(new Date(), 'DOB must be before today'),
-  status: Yup.string(),
+  status: Yup.string().required('Required'),
 });
 
-// Form component to add or update a user based on the id in the URL params and the user data in the redux store state based on the id
 const UserFormView = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -41,23 +40,21 @@ const UserFormView = () => {
 
   useEffect(() => {
     if (id) {
+      console.log(id);
       dispatch(fetchUserById(id));
+      console.log(id);
     }
   }, [id, dispatch]);
 
   return (
     <Formik
       initialValues={{
-        name: !id ? '' : user ? user.name : '',
-        email: !id ? '' : user ? user.email : '',
-        about: !id ? '' : user ? user.about : '',
-        phoneNumber: !id ? '' : user ? user.phoneNumber : '',
-        dob: !id
-          ? ''
-          : user
-          ? new Date(user.dob).toISOString().split('T')[0]
-          : '',
-        status: !id ? true : user ? user.status : true,
+        name: user ? user.name : '',
+        email: user ? user.email : '',
+        about: user ? user.about : '',
+        phoneNumber: user ? user.phoneNumber : '',
+        dob: user ? new Date(user.dob).toISOString().split('T')[0] : '',
+        status: user ? user.status : true,
       }}
       enableReinitialize
       validationSchema={validationSchema}
@@ -73,6 +70,7 @@ const UserFormView = () => {
             dispatch(updateUsers({ id: id, ...changes }));
           } else {
             dispatch(addUsers(JSON.stringify(values)));
+            console.log(values);
           }
           setSubmitting(false);
           navigate('/');
@@ -96,6 +94,7 @@ const UserFormView = () => {
                   Name
                 </label>
                 <Field
+                  id="name"
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                   name="name"
                   type="text"
@@ -122,6 +121,7 @@ const UserFormView = () => {
                 </label>
                 <Field
                   name="email"
+                  id="email"
                   type="email"
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                   placeholder="Doe@example.com"
@@ -150,6 +150,7 @@ const UserFormView = () => {
                 </label>
                 <Field
                   name="phoneNumber"
+                  id="phoneNumber"
                   type="text"
                   placeholder="98XXXX7899"
                   onInput={(event) => {
@@ -163,7 +164,6 @@ const UserFormView = () => {
                   }}
                   value={values.phoneNumber}
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                  id="grid-password"
                 />
 
                 <ErrorMessage
@@ -204,6 +204,7 @@ const UserFormView = () => {
                 </label>
                 <Field
                   name="about"
+                  id="about"
                   type="text"
                   placeholder="about"
                   value={values.about}
@@ -221,6 +222,7 @@ const UserFormView = () => {
                 </label>
                 <Field
                   name="status"
+                  id="status"
                   as="select"
                   className="appearance-none block w-64 bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                 >
