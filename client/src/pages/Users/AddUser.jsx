@@ -29,7 +29,7 @@ const validationSchema = Yup.object({
   dob: Yup.date()
     .required('Required')
     .max(new Date(), 'DOB must be before today'),
-  status: Yup.string().required('Required'),
+  status: Yup.string(),
 });
 
 // Form component to add or update a user based on the id in the URL params and the user data in the redux store state based on the id
@@ -57,7 +57,7 @@ const UserFormView = () => {
           : user
           ? new Date(user.dob).toISOString().split('T')[0]
           : '',
-        status: !id ? '' : user ? user.status : true,
+        status: !id ? true : user ? user.status : true,
       }}
       enableReinitialize
       validationSchema={validationSchema}

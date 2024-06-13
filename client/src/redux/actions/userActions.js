@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-const BASE_URL = `http://localhost:5000/api`;
+// const BASE_URL = `http://localhost:5000/api`;
+const BASE_URL = `https://crud-application-backend-6e5y.onrender.com/api`;
 export const fetchUserById = createAsyncThunk(
   'user/fetchUserById',
   async (id) => {
