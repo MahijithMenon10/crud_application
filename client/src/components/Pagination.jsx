@@ -1,20 +1,28 @@
 import ReactPaginate from 'react-paginate';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-
+import { useSearchParams } from 'react-router-dom';
 import { setPage } from '../redux/slices/dataSlice';
 export function CircularPagination() {
   const navigate = useNavigate();
   const totalPages = useSelector((state) => state.data.totalPages);
   const dispatch = useDispatch();
-
+  const [searchParams] = useSearchParams();
   const handlePageClick = (event) => {
     dispatch(setPage(event.selected + 1));
-    navigate(`?page=${event.selected + 1}`);
+    searchParams.set('page', event.selected + 1);
+    navigate(`?${searchParams.toString()}`);
   };
 
+  let initialPage = Number(searchParams.get('page')) - 1;
+  if (isNaN(initialPage) || initialPage < 0) {
+    initialPage = 0; // Set to 0 because react-paginate uses zero-based index
+  }
+  if (totalPages <= 1 || initialPage + 1 > totalPages) return null;
   return (
     <ReactPaginate
+      forcePage={initialPage}
+      initialPage={initialPage}
       breakLabel="..."
       nextLabel=">"
       previousLabel="<"
