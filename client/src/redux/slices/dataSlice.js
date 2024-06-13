@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   data: [],
+  extraData: [],
   status: 'idle',
   error: null,
   page: 1,
@@ -14,6 +15,7 @@ import {
   addUsers,
 } from '../actions/dataActions.js';
 import { deleteUser } from '../actions/userActions.js';
+import { useDispatch } from 'react-redux';
 export const dataSlice = createSlice({
   name: 'data',
   initialState,
@@ -40,12 +42,17 @@ export const dataSlice = createSlice({
     setPage: (state, action) => {
       state.page = action.payload;
     },
+    setError: (state, action) => {
+      state.error = action.payload;
+    },
 
-    updatestatus: (state, action) => {
+    updateStatus: (state, action) => {
       const index = state.data.findIndex(
-        (item) => item.id === action.payload.id
+        (item) => item._id === action.payload._id
       );
-      state.data[index].status = action.payload.status;
+      if (index !== -1) {
+        state.data[index].status = action.payload.status;
+      }
     },
   },
 
@@ -56,11 +63,13 @@ export const dataSlice = createSlice({
       })
 
       .addCase(fetchUsers.fulfilled, (state, action) => {
+        const totalData = action.payload.count;
+        const displayedCount = 5;
         state.status = 'succeeded';
-        state.data = action.payload.data;
+        state.data = action.payload.data.slice(0, displayedCount);
+        state.extraData = action.payload.data.slice(displayedCount, totalData);
         state.countDocuments = action.payload.count;
         state.totalPages = action.payload.totalPages;
-        console.log(action.payload);
       })
 
       .addCase(fetchUsers.rejected, (state, action) => {
@@ -70,24 +79,21 @@ export const dataSlice = createSlice({
 
     builder
       .addCase(updateStatus.pending, (state) => {
-        state.status = 'loading';
+        state.updateStatus = 'loading';
       })
 
       .addCase(updateStatus.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        console.log(action.payload);
         const index = state.data.findIndex(
-          (item) => item._id === action.payload._id
+          (item) => item._id === action.payload.data._id
         );
         if (index !== -1) {
           state.data = state.data.map((item, i) =>
-            i === index ? { ...item, status: action.payload.status } : item
+            i === index ? { ...item, status: action.payload.data.status } : item
           );
         }
       })
 
       .addCase(updateStatus.rejected, (state, action) => {
-        state.status = 'failed';
         state.error = action.error.message;
       });
 
@@ -99,9 +105,9 @@ export const dataSlice = createSlice({
       .addCase(updateUsers.fulfilled, (state, action) => {
         state.status = 'succeeded';
         const index = state.data.findIndex(
-          (item) => item.id === action.payload.id
+          (item) => item._id === action.payload.data._id
         );
-        state.data[index] = action.payload;
+        state.data[index] = { ...state.data[index], ...action.payload.data };
       })
 
       .addCase(updateUsers.rejected, (state, action) => {
@@ -116,7 +122,12 @@ export const dataSlice = createSlice({
 
       .addCase(addUsers.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.data.push(action.payload);
+        state.data.unshift(action.payload);
+        if (state.data.length > 5) {
+          state.extraData = state.data.slice(5);
+          state.data = state.data.slice(0, 5);
+          state.countDocuments = state.countDocuments + 1;
+        }
       })
 
       .addCase(addUsers.rejected, (state, action) => {
@@ -125,7 +136,11 @@ export const dataSlice = createSlice({
       });
 
     builder.addCase(deleteUser.fulfilled, (state, action) => {
-      state.data = state.data.filter((item) => item.id !== action.payload);
+      state.data = state.data.filter((item) => item._id !== action.payload.id);
+      if (state.extraData.length > 0) {
+        const newItem = state.extraData.shift();
+        if (newItem) state.data.push(newItem);
+      }
     });
   },
 });

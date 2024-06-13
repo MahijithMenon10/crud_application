@@ -1,7 +1,9 @@
 import axios from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+
 // const BASE_URL = `https://crud-application-backend-6e5y.onrender.com/api`;
 const BASE_URL = `http://localhost:5000/api`;
+
 export const updateStatus = createAsyncThunk(
   'data/updateStatus',
   async (data) => {
@@ -26,7 +28,6 @@ export const addUsers = createAsyncThunk('data/addData', async (data) => {
 export const fetchUsers = createAsyncThunk(
   'data/fetchUsers',
   async ({ date, status, email, name, page }) => {
-    console.log(date, status, email, name, page);
     const response = await axios.get(`${BASE_URL}/fetchUsers`, {
       params: {
         page,

@@ -22,9 +22,7 @@ export const userSlice = createSlice({
       })
       .addCase(fetchUserById.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        console.log('action.payload');
-        console.log(action.payload);
-        state.user = action.payload;
+        state.user = action.payload.data;
       })
       .addCase(fetchUserById.rejected, (state, action) => {
         state.status = 'failed';
