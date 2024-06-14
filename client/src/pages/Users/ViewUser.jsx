@@ -38,7 +38,6 @@ const ViewUser = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <BackButton />
       <div className="bg-white rounded-lg shadow-lg w-full max-w-md lg:max-w-lg p-8 space-y-6">
         <div className="flex items-center space-x-4">
           <div className="h-24 w-24 rounded-full overflow-hidden">
@@ -83,6 +82,7 @@ const ViewUser = () => {
             </p>
           </div>
         </div>
+        <BackButton />
       </div>
     </div>
   );
