@@ -10,12 +10,22 @@ dotenv.config();
 
 const app = express();
 app.use(bodyParser.json());
-app.use(
-  cors({
-    origin: true,
-    credentials: true,
-  })
-);
+const allowedOrigins = [
+  'https://crud-application-psi.vercel.app',
+  'http://localhost:5173',
+];
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: true }));
 connectDB();
 app.get('/', (req, res) => {
