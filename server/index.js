@@ -15,7 +15,6 @@ app.use(
     credentials: true,
   })
 );
-cors({ credentials: true, origin: true });
 app.use(bodyParser.urlencoded({ extended: true }));
 connectDB();
 app.get('/', (req, res) => {
