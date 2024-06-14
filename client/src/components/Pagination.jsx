@@ -9,11 +9,11 @@ export function CircularPagination() {
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
   const handlePageClick = (event) => {
-    dispatch(setPage(event.selected + 1));
-    searchParams.set('page', event.selected + 1);
+    let selectedPage = event.selected + 1;
+    dispatch(setPage(selectedPage - 1));
+    searchParams.set('page', selectedPage);
     navigate(`?${searchParams.toString()}`);
   };
-
   let initialPage = Number(searchParams.get('page')) - 1;
   if (isNaN(initialPage) || initialPage < 0) {
     initialPage = 0; // Set to 0 because react-paginate uses zero-based index
