@@ -1,10 +1,11 @@
 import { BrowserRouter as Router } from 'react-router-dom';
-// import DeleteModal from './components/DeleteModal';
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import RouteRenderer from './routes/route-renderer';
 const App = () => {
   return (
     <Router>
+      <ToastContainer />
       <RouteRenderer />
     </Router>
   );

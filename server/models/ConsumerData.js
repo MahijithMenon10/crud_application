@@ -14,10 +14,7 @@ const ConsumerDataSchema = new mongoose.Schema({
   },
   about: String,
   dob: Date,
-  skills: [String],
 });
-
-ConsumerDataSchema.index({ email: 1 });
 
 const ConsumerData = mongoose.model('ConsumerData', ConsumerDataSchema);
 

@@ -2,7 +2,10 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   data: [],
   extraData: [],
-  status: 'idle',
+  isCreatingUser: false,
+  isFetchingUsers: false,
+  isUpdatingUser: false,
+  isUpdateStatus: false,
   error: null,
   page: 1,
   totalPages: 1,
@@ -15,7 +18,6 @@ import {
   addUsers,
 } from '../actions/dataActions.js';
 import { deleteUser } from '../actions/userActions.js';
-import { useDispatch } from 'react-redux';
 export const dataSlice = createSlice({
   name: 'data',
   initialState,
@@ -59,27 +61,31 @@ export const dataSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchUsers.pending, (state) => {
-        state.status = 'loading';
+        state.isFetchingUsers = true;
+        state.error = null;
       })
 
       .addCase(fetchUsers.fulfilled, (state, action) => {
+        state.isFetchingUsers = false;
         const totalData = action.payload.count;
         const displayedCount = 5;
         state.status = 'succeeded';
         state.data = action.payload.data.slice(0, displayedCount);
         state.extraData = action.payload.data.slice(displayedCount, totalData);
-        state.countDocuments = action.payload.count;
+        state.countDocuments = action.payload.countDocuments;
         state.totalPages = action.payload.totalPages;
       })
 
       .addCase(fetchUsers.rejected, (state, action) => {
         state.status = 'failed';
+        state.isFetchingUsers = false;
         state.error = action.error.message;
       });
 
     builder
       .addCase(updateStatus.pending, (state) => {
-        state.updateStatus = 'loading';
+        state.isUpdateStatus = true;
+        state.previousData = state.data;
       })
 
       .addCase(updateStatus.fulfilled, (state, action) => {
@@ -91,37 +97,40 @@ export const dataSlice = createSlice({
             i === index ? { ...item, status: action.payload.data.status } : item
           );
         }
+        state.isUpdateStatus = false;
       })
 
       .addCase(updateStatus.rejected, (state, action) => {
+        state.isUpdateStatus = false;
+        state.data = state.previousData;
         state.error = action.error.message;
       });
 
     builder
       .addCase(updateUsers.pending, (state) => {
-        state.status = 'loading';
+        state.isUpdatingUser = true;
       })
 
       .addCase(updateUsers.fulfilled, (state, action) => {
-        state.status = 'succeeded';
         const index = state.data.findIndex(
           (item) => item._id === action.payload.data._id
         );
         state.data[index] = { ...state.data[index], ...action.payload.data };
+        state.isUpdatingUser = false;
       })
 
       .addCase(updateUsers.rejected, (state, action) => {
-        state.status = 'failed';
+        state.isUpdatingUser = false;
         state.error = action.error.message;
       });
 
     builder
       .addCase(addUsers.pending, (state) => {
-        state.status = 'loading';
+        state.isCreatingUser = true;
       })
 
       .addCase(addUsers.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        state.isCreatingUser = false;
         state.data.unshift(action.payload);
         if (state.data.length > 5) {
           state.extraData = state.data.slice(5);
@@ -131,7 +140,7 @@ export const dataSlice = createSlice({
       })
 
       .addCase(addUsers.rejected, (state, action) => {
-        state.status = 'failed';
+        state.isCreatingUser = false;
         state.error = action.error.message;
       });
 
@@ -141,6 +150,8 @@ export const dataSlice = createSlice({
         const newItem = state.extraData.shift();
         if (newItem) state.data.push(newItem);
       }
+      state.countDocuments = state.countDocuments - 1;
+      state.totalPages = Math.ceil(state.countDocuments / 5);
     });
   },
 });

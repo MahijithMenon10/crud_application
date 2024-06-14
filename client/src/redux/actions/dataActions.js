@@ -41,7 +41,10 @@ export const fetchUsers = createAsyncThunk(
   }
 );
 
-export const updateUsers = createAsyncThunk('data/updateData', async (data) => {
-  const response = await axios.put(`${BASE_URL}/updateuser/${data.id}`, data);
-  return response.data;
-});
+export const updateUsers = createAsyncThunk(
+  'data/updateData',
+  async ({ id, changes }) => {
+    const response = await axios.put(`${BASE_URL}/updateuser/${id}`, changes);
+    return response.data;
+  }
+);

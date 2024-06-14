@@ -12,9 +12,12 @@ import Modal from 'react-modal';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { CircularPagination } from '../../components/Pagination';
 import Header from '../../components/Header';
+import { toast } from 'react-toastify';
 const Home = () => {
   const dispatch = useDispatch();
+  const isFetchingUsers = useSelector((state) => state.data.isFetchingUsers);
   const [loadingIds, setLoadingIds] = useState([]);
+  const countDocuments = useSelector((state) => state.data.countDocuments);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { data } = useSelector((state) => state.data);
@@ -27,7 +30,14 @@ const Home = () => {
 
   const handleDelete = async () => {
     setModalIsOpen(false);
-    dispatch(deleteUser(selectedId));
+    dispatch(deleteUser(selectedId))
+      .unwrap()
+      .then(() => {
+        toast.success('User deleted successfully');
+      })
+      .catch((err) => {
+        toast.error('Failed to delete user : ' + err.message);
+      });
   };
   const handleSwitchChange = (userId) => (checked) => {
     setLoadingIds((prevIds) => [...prevIds, userId]);
@@ -35,6 +45,10 @@ const Home = () => {
       .unwrap()
       .then(() => {
         setLoadingIds((prevIds) => prevIds.filter((id) => id !== userId));
+      })
+      .catch((err) => {
+        setLoadingIds((prevIds) => prevIds.filter((id) => id !== userId));
+        toast.error('Failed to update status : ' + err.message);
       });
   };
 
@@ -76,144 +90,149 @@ const Home = () => {
         <Header />
         <div className="flex flex-col items-center my-4">
           <h1 className="text-3xl font-semibold text-center my-4">
-            Consumer Data
+            Total Data :{' ' + countDocuments}
           </h1>
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Email
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Contact No
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {data.length === 0 ? (
+          {isFetchingUsers ? (
+            <Loader />
+          ) : (
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
                 <tr>
-                  <td colSpan={5} className="px-6 py-4 text-center">
-                    No data
-                  </td>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Name
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Email
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Contact No
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
-              ) : (
-                data.map((item) => {
-                  return (
-                    <tr key={item._id}>
-                      {console.log(item)}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{item.name}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {item.email}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {item.phoneNumber}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div key={item._id} className="text-sm text-gray-900">
-                          {loadingIds.includes(item._id) ? (
-                            <Loader />
-                          ) : (
-                            <Switch
-                              onChange={handleSwitchChange(item._id)}
-                              checked={item.status}
-                            />
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <button onClick={() => setIsOpen(item._id)}>
-                          <BsThreeDotsVertical />
-                        </button>
-                        <>
-                          {isOpen === item._id && (
-                            <div
-                              ref={dropdownRef}
-                              className="absolute bg-white shadow-lg p-4 z-10 right-12 top-45"
-                            >
-                              <p
-                                className="cursor-pointer"
-                                onClick={() => {
-                                  handleView(item._id);
-                                  isOpen(null);
-                                }}
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {data.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-4 text-center">
+                      No data
+                    </td>
+                  </tr>
+                ) : (
+                  data.map((item) => {
+                    return (
+                      <tr key={item._id}>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">
+                            {item.name}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">
+                            {item.email}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">
+                            {item.phoneNumber}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div key={item._id} className="text-sm text-gray-900">
+                            {loadingIds.includes(item._id) ? (
+                              <Loader />
+                            ) : (
+                              <Switch
+                                onChange={handleSwitchChange(item._id)}
+                                checked={item.status}
+                              />
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <button onClick={() => setIsOpen(item._id)}>
+                            <BsThreeDotsVertical />
+                          </button>
+                          <>
+                            {isOpen === item._id && (
+                              <div
+                                ref={dropdownRef}
+                                className="absolute bg-white shadow-lg p-4 z-10 right-12 top-45"
                               >
-                                View
-                              </p>
-                              <p
-                                className="cursor-pointer"
-                                onClick={() => {
-                                  handleEdit(item._id);
-                                  isOpen(null);
-                                }}
-                              >
-                                Edit
-                              </p>
-                              <p
-                                className="cursor-pointer"
-                                onClick={() => {
-                                  setModalIsOpen(true);
-                                  setSelectedId(item._id);
-                                  setIsOpen(null);
-                                }}
-                              >
-                                Delete
-                              </p>
-                            </div>
-                          )}
-                          <Modal
-                            isOpen={modalIsOpen}
-                            ariaHideApp={false}
-                            onRequestClose={() => setModalIsOpen(false)}
-                            contentLabel="Delete Confirmation"
-                            className="flex items-center justify-center outline-none"
-                            overlayClassName="fixed inset-0 bg-gray-500 bg-opacity-5 flex items-center justify-center"
-                          >
-                            <div className="bg-white rounded-lg px-8 pt-6 pb-8 mb-4">
-                              <h2 className="block text-gray-700 text-xl font-bold mb-2">
-                                Confirm Delete
-                              </h2>
-                              <p className="mb-6 text-gray-700 text-base">
-                                Are you sure you want to delete this item?
-                              </p>
-                              <div className="flex items-center justify-between">
-                                <button
-                                  onClick={() => setModalIsOpen(false)}
-                                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                <p
+                                  className="cursor-pointer"
+                                  onClick={() => {
+                                    handleView(item._id);
+                                    isOpen(null);
+                                  }}
                                 >
-                                  No
-                                </button>
-                                <button
-                                  onClick={handleDelete}
-                                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                  View
+                                </p>
+                                <p
+                                  className="cursor-pointer"
+                                  onClick={() => {
+                                    handleEdit(item._id);
+                                    isOpen(null);
+                                  }}
                                 >
-                                  Yes
-                                </button>
+                                  Edit
+                                </p>
+                                <p
+                                  className="cursor-pointer"
+                                  onClick={() => {
+                                    setModalIsOpen(true);
+                                    setSelectedId(item._id);
+                                    setIsOpen(null);
+                                  }}
+                                >
+                                  Delete
+                                </p>
                               </div>
-                            </div>
-                          </Modal>
-                        </>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
+                            )}
+                            <Modal
+                              isOpen={modalIsOpen}
+                              ariaHideApp={false}
+                              onRequestClose={() => setModalIsOpen(false)}
+                              contentLabel="Delete Confirmation"
+                              className="flex items-center justify-center outline-none"
+                              overlayClassName="fixed inset-0 bg-gray-500 bg-opacity-5 flex items-center justify-center"
+                            >
+                              <div className="bg-white rounded-lg px-8 pt-6 pb-8 mb-4">
+                                <h2 className="block text-gray-700 text-xl font-bold mb-2">
+                                  Confirm Delete
+                                </h2>
+                                <p className="mb-6 text-gray-700 text-base">
+                                  Are you sure you want to delete this item?
+                                </p>
+                                <div className="flex items-center justify-between">
+                                  <button
+                                    onClick={() => setModalIsOpen(false)}
+                                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                  >
+                                    No
+                                  </button>
+                                  <button
+                                    onClick={handleDelete}
+                                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                  >
+                                    Yes
+                                  </button>
+                                </div>
+                              </div>
+                            </Modal>
+                          </>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          )}
         </div>
         <CircularPagination />
       </div>

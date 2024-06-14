@@ -63,7 +63,7 @@ const updateConsumerData = async (req, res) => {
   const updatedConsumerData = await ConsumerData.findByIdAndUpdate(
     id,
     { ...changes },
-    { new: true }
+    { new: true, runValidators: true }
   );
 
   res.json({
