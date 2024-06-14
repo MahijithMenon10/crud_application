@@ -51,7 +51,7 @@ const Header = () => {
     dispatch(fetchUsers(filters))
       .unwrap()
       .then(() => {
-        console.log('Users fetched successfully');
+        //
       })
       .catch((err) => {
         toast.error('Failed to fetch users: ', err.message);

@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const BASE_URL = `https://crud-application-9hzn.onrender.com/api`;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 export const fetchUserById = createAsyncThunk(
   'user/fetchUserById',
   async (id) => {

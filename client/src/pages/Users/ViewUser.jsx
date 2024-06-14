@@ -17,7 +17,7 @@ const ViewUser = () => {
     dispatch(fetchUserById(id))
       .unwrap()
       .then(() => {
-        console.log('User fetched successfully');
+        //
       })
       .catch((err) => {
         toast.error('Failed to delete user : ' + err.message);

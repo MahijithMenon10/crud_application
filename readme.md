@@ -1,2 +1,2 @@
 Backend-https://crud-application-9hzn.onrender.com
-Frontend-
+Frontend-https://crud-application-psi.vercel.app/

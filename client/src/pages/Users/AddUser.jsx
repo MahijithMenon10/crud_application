@@ -71,7 +71,6 @@ const UserFormView = () => {
                 }
                 return acc;
               }, {});
-              console.log('Changes:', changes);
               dispatch(updateUsers({ id, changes }))
                 .unwrap()
                 .then(() => {
@@ -97,7 +96,7 @@ const UserFormView = () => {
                 });
             }
           } catch (error) {
-            console.error('Failed to update or add user:', error);
+            toast.error('Failed to update or add user:', error);
           }
         }}
       >

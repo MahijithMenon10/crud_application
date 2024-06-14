@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-const BASE_URL = `https://crud-application-9hzn.onrender.com/api`;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export const updateStatus = createAsyncThunk(
   'data/updateStatus',
