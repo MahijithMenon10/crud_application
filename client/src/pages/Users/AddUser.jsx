@@ -1,3 +1,5 @@
+// add user form and edit user form
+// The user form is used to add a new user or edit an existing user. The form contains input fields for the user's name, email, phone number, date of birth, about, and status. The form also contains validation for each input field.
 import { useDispatch, useSelector } from 'react-redux';
 import { addUsers, updateUsers } from '../../redux/actions/dataActions';
 import { fetchUserById } from '../../redux/actions/userActions';

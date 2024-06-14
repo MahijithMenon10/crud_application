@@ -1,3 +1,5 @@
+// Services for consumerData are defined in consumerDataService.js.
+// This file is responsible for fetching data from the database and returning it to the client.
 const ConsumerData = require('../models/ConsumerData');
 
 const getConsumerData = async ({ page, date, status, email, name }) => {

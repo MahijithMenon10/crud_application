@@ -1,3 +1,4 @@
+// This File Config the routes for the application using the useRoutes hook from the react-router-dom library.
 import Home from '../pages/Home/Home';
 
 import appRoutes from './route';

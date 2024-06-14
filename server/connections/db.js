@@ -1,3 +1,5 @@
+//Used to connect to the MongoDB database using Mongoose. Also creates an index on the createdAt field of the ConsumerData model to speed up queries.
+
 const mongoose = require('mongoose');
 const ConsumerData = require('../models/ConsumerData');
 

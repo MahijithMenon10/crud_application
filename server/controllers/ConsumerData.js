@@ -1,3 +1,4 @@
+// This file contains  the controllers for the application. It uses the ConsumerData model to interact with the database.
 const mongoose = require('mongoose');
 const ConsumerData = require('../models/ConsumerData');
 const consumerDataService = require('../services/consumerDataService');

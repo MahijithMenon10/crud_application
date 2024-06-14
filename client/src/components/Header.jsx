@@ -1,3 +1,4 @@
+// Header component that contains the search and filter inputs for the users list page
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';

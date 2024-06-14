@@ -1,3 +1,5 @@
+// this file is used to create a schema for the consumer data and export it as a model
+
 const mongoose = require('mongoose');
 
 const ConsumerDataSchema = new mongoose.Schema({

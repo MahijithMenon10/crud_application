@@ -1,3 +1,4 @@
+// index.js is the entry point of the application. It is responsible for starting the server, requiring the necessary modules, and defining the routes.
 const express = require('express');
 const dotenv = require('dotenv');
 const consumerData = require('./routes/ConsumerData');

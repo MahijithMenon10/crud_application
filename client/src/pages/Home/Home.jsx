@@ -1,3 +1,5 @@
+// Desc: Home page component
+// Home Component where all the users are displayed in a table format. The user can view, edit, and delete the user from this page. The user can also change the status of the user from active to inactive and vice versa.
 import { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Switch from 'react-switch';

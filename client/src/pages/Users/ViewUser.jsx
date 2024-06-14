@@ -1,3 +1,6 @@
+// view user is implemented in the client/src/pages/Users/ViewUser.jsx file.
+// The ViewUser component fetches a user by their ID and displays the user's details.
+// The user's details include their name, email, phone number, about, and date of birth.
 import { fetchUserById } from '../../redux/actions/userActions';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
