@@ -152,6 +152,11 @@ export const dataSlice = createSlice({
       }
       state.countDocuments = state.countDocuments - 1;
       state.totalPages = Math.ceil(state.countDocuments / 5);
+
+      // If no data left on the current page, move to the previous page
+      if (state.data.length === 0 && state.page > 1) {
+        state.page = state.page - 1;
+      }
     });
   },
 });
