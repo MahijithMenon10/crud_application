@@ -9,7 +9,7 @@ const {
   updateConsumerData,
   deleteConsumerData,
   updateConsumerStatusData,
-} = require('../controllers/ConsumerData');
+} = require('../controllers/dataControllers');
 
 router
   .get('/fetchUsers', getAllConsumerData)
