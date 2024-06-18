@@ -92,7 +92,7 @@ const Home = () => {
         <Header />
         <div className="flex flex-col items-center my-4">
           <h1 className="text-3xl font-semibold text-center my-4">
-            Total Data :{' ' + countDocuments}
+            Total Data :{' ' + data.length}
           </h1>
           {isFetchingUsers ? (
             <Loader />
