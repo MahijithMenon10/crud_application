@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { setPage } from '../redux/slices/dataSlice';
+import { useEffect } from 'react';
 export function CircularPagination() {
   const navigate = useNavigate();
   const totalPages = useSelector((state) => state.data.totalPages);
+  const { data } = useSelector((state) => state.data);
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
   const handlePageClick = (event) => {
@@ -19,6 +21,7 @@ export function CircularPagination() {
     initialPage = 0; // Set to 0 because react-paginate uses zero-based index
   }
   if (totalPages <= 1 || initialPage + 1 > totalPages) return null;
+
   return (
     <ReactPaginate
       forcePage={initialPage}

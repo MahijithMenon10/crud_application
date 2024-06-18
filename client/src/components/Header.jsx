@@ -12,7 +12,7 @@ const validationSchema = Yup.object().shape({
   name: Yup.string()
     .matches(
       /^[a-zA-Z]+(\s[a-zA-Z]+)*$/,
-      'Name should only contain letters and single spaces between words'
+      'Only contain letters and single spaces'
     )
     .max(20, 'Name should not exceed 20 characters')
     .trim(),
@@ -59,7 +59,7 @@ const Header = () => {
       });
   };
 
-  const handleClearFilters = () => {
+  const handleClearFilters = (resetForm) => {
     dispatch(fetchUsers({ page: 1 }))
       .unwrap()
       .then(() => {
@@ -69,6 +69,7 @@ const Header = () => {
         setDateFilter('');
         let newSearchParams = new URLSearchParams();
         setSearchParams(newSearchParams);
+        resetForm();
       })
       .catch((err) => {
         toast.error('Failed to fetch users: ', err.message);
@@ -121,103 +122,112 @@ const Header = () => {
       >
         {(formik) => (
           <Form className="flex flex-row space-x-4">
-            <Field
-              className=" p-2 border-2 w-auto m-5 h-10 border-gray-300 rounded-lg focus:outline-none"
-              placeholder="Search by name..."
-              name="name"
-              onChange={(e) => {
-                let value = e.target.value;
-                if (value.length > 20) {
-                  value = value.slice(0, 20);
-                }
-                if (value.startsWith(' ')) {
-                  value = value.trimStart();
-                }
-                value = value.replace(/\s\s+/g, ' ');
-                formik.handleChange({
-                  target: {
-                    name: e.target.name,
-                    value: value,
-                  },
-                });
-                handleFilterChange('name', value);
-              }}
-            />
-            <ErrorMessage
-              name="name"
-              component="div"
-              className="text-red-500"
-            />
-            <Field
-              className="w-auto p-2 border-2 m-5   h-10 border-gray-300 rounded-lg focus:outline-none"
-              placeholder="Search by email..."
-              name="email"
-              onChange={(e) => {
-                let value = e.target.value;
-                if (value.startsWith(' ')) {
-                  value = value.trimStart();
-                }
-                value = value.replace(/\s/g, '');
+            <div className="flex flex-col">
+              <Field
+                className=" p-2 border-2 w-auto m-5 h-10 border-gray-300 rounded-lg focus:outline-none"
+                placeholder="Search by name..."
+                name="name"
+                onChange={(e) => {
+                  let value = e.target.value;
+                  if (value.length > 20) {
+                    value = value.slice(0, 20);
+                  }
+                  if (value.startsWith(' ')) {
+                    value = value.trimStart();
+                  }
+                  value = value.replace(/\s\s+/g, ' ');
+                  formik.handleChange({
+                    target: {
+                      name: e.target.name,
+                      value: value,
+                    },
+                  });
+                  handleFilterChange('name', value);
+                }}
+              />
+              <ErrorMessage
+                name="name"
+                component="div"
+                className="text-red-500"
+              />
+            </div>
+            <div className="flex flex-col">
+              <Field
+                className="w-auto p-2 border-2 m-5   h-10 border-gray-300 rounded-lg focus:outline-none"
+                placeholder="Search by email..."
+                name="email"
+                onChange={(e) => {
+                  let value = e.target.value;
+                  if (value.startsWith(' ')) {
+                    value = value.trimStart();
+                  }
+                  value = value.replace(/\s/g, '');
 
-                if (value.length > 30) {
-                  value = value.slice(0, 30);
-                }
+                  if (value.length > 30) {
+                    value = value.slice(0, 30);
+                  }
 
-                formik.handleChange({
-                  target: {
-                    name: e.target.name,
-                    value: value,
-                  },
-                });
-                handleFilterChange('email', value);
-              }}
-            />
-            <ErrorMessage
-              name="email"
-              component="div"
-              className="text-red-500"
-            />
-            <Field
-              as="select"
-              className="w-full m-5 h-10 p-2 border-2 border-gray-300 rounded-lg focus:outline-none"
-              name="status"
-              onChange={(e) => {
-                formik.handleChange(e);
-                handleFilterChange('status', e.target.value);
-              }}
-            >
-              <option value="">All</option>
-              <option value="true">Active</option>
-              <option value="false">Inactive</option>
-            </Field>
-            <ErrorMessage
-              name="status"
-              component="div"
-              className="text-red-500"
-            />
-            <Field
-              as="select"
-              className="w-full  h-10 m-5 border-2 border-gray-300 rounded-lg focus:outline-none"
-              name="date"
-              onChange={(e) => {
-                formik.handleChange(e);
-                handleFilterChange('date', e.target.value);
-              }}
-            >
-              <option value="">All</option>
-              <option value="today">Today</option>
-              <option value="this week">This Week</option>
-              <option value="This month">This Month</option>
-            </Field>
-            <ErrorMessage
-              name="date"
-              component="div"
-              className="text-red-500"
-            />
+                  formik.handleChange({
+                    target: {
+                      name: e.target.name,
+                      value: value,
+                    },
+                  });
+                  handleFilterChange('email', value);
+                }}
+              />
+              <ErrorMessage
+                name="email"
+                component="div"
+                className="text-red-500"
+              />
+            </div>
+            <div className="flex flex-col">
+              <Field
+                as="select"
+                className="w-full m-5 h-10 p-2 border-2 border-gray-300 rounded-lg focus:outline-none"
+                name="status"
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  handleFilterChange('status', e.target.value);
+                }}
+              >
+                <option value="">All</option>
+                <option value="true">Active</option>
+                <option value="false">Inactive</option>
+              </Field>
+              <ErrorMessage
+                name="status"
+                component="div"
+                className="text-red-500"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <Field
+                as="select"
+                className="w-full  h-10 m-5 border-2 border-gray-300 rounded-lg focus:outline-none"
+                name="date"
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  handleFilterChange('date', e.target.value);
+                }}
+              >
+                <option value="">All</option>
+                <option value="today">Today</option>
+                <option value="this week">This Week</option>
+                <option value="This month">This Month</option>
+              </Field>
+              <ErrorMessage
+                name="date"
+                component="div"
+                className="text-red-500 text-sm italic mt-2"
+              />
+            </div>
             <button
               className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded m-2 flex-auto"
               type="button"
-              onClick={() => handleClearFilters()}
+              onClick={() => handleClearFilters(formik.resetForm)}
             >
               Clear Filters
             </button>

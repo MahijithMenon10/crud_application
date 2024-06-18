@@ -102,7 +102,7 @@ const UserFormView = () => {
           }
         }}
       >
-        {({ values }) => (
+        {({ values, isValid, dirty }) => (
           <>
             <div className="min-h-screen flex justify-center items-center">
               <Form className="w-full max-w-lg bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
@@ -263,7 +263,13 @@ const UserFormView = () => {
                 <div className="flex items-center justify-between">
                   <button
                     type="submit"
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    disabled={!isValid || !dirty}
+                    className={`font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline 
+    ${
+      isValid && dirty
+        ? 'bg-blue-500 hover:bg-blue-700 text-white'
+        : 'bg-gray-500 text-gray-300 cursor-not-allowed'
+    }`}
                   >
                     {id ? 'Update User' : 'Add User'}
                   </button>
