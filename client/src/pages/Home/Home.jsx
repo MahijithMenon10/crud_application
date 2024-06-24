@@ -19,7 +19,6 @@ const Home = () => {
   const dispatch = useDispatch();
   const isFetchingUsers = useSelector((state) => state.data.isFetchingUsers);
   const [loadingIds, setLoadingIds] = useState([]);
-  const countDocuments = useSelector((state) => state.data.countDocuments);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { data } = useSelector((state) => state.data);

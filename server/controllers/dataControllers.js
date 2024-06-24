@@ -9,16 +9,35 @@ const getAllConsumerData = async (req, res) => {
       req.query
     );
     const totalPages = Math.ceil(countDocuments / 5);
-    res.json({
+
+    // Check if consumerData is empty
+    if (consumerData.length === 0) {
+      return res.status(404).json({
+        statusCode: 404,
+        message: 'No data found',
+        page: req.query.page || 1,
+        totalPages: 0,
+        countDocuments: 0,
+      });
+    }
+
+    res.status(200).json({
       data: consumerData,
       statusCode: 200,
       message: 'Data Fetched Successfully',
-      page: req.query.page,
+      page: req.query.page || 1,
       totalPages,
       countDocuments,
     });
   } catch (error) {
-    res.json({ message: error.message });
+    // Log the error for debugging purposes
+    console.error('Error fetching consumer data:', error);
+
+    // Respond with a generic error message to avoid exposing sensitive information
+    res.status(500).json({
+      statusCode: 500,
+      message: 'An error occurred while fetching data',
+    });
   }
 };
 const getConsumerDataById = async (req, res) => {
