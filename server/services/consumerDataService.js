@@ -56,7 +56,8 @@ const getConsumerData = async ({ page, date, status, email, name }) => {
     ...nameFilter,
   })
     .limit(limit + extraDataLimit)
-    .skip(startIndex);
+    .skip(startIndex)
+    .sort('-date');
 
   return consumerData;
 };
