@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 
 const ConsumerDataSchema = new mongoose.Schema({
   name: String,
+  password: String,
   email: String,
   status: Boolean,
   date: {

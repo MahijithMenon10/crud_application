@@ -2,6 +2,88 @@
 const mongoose = require('mongoose');
 const ConsumerData = require('../models/ConsumerData');
 const consumerDataService = require('../services/consumerDataService');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
+const countAllUsers = async (req, res) => {
+  try {
+    const count = await ConsumerData.countDocuments();
+    res.json({ data: count, message: 'Total Users Count', statusCode: 200 });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+};
+
+const countActiveUsers = async (req, res) => {
+  try {
+    const count = await ConsumerData.countDocuments({ status: 'active' });
+    res.json({ data: count, message: 'Active Users Count', statusCode: 200 });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+};
+
+const loginConsumer = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await ConsumerData.findOne({ email });
+
+    if (!user) {
+      return res.status(400).send('Invalid email or password');
+    }
+
+    const isPasswordCorrect = bcrypt.compare(password, user.password);
+
+    if (!isPasswordCorrect) {
+      return res.status(400).send('Invalid email or password');
+    }
+    const userDetails = {
+      name: user.name,
+      email: user.email,
+    };
+    const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET);
+    res.json({
+      statusCode: 200,
+      message: 'User logged in successfully',
+      data: { userDetails, token },
+    });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+};
+
+const registerConsumer = async (req, res) => {
+  const { name, email, password } = req.body;
+
+  if (!name || !email || !password) {
+    return res.status(400).send('Please provide all fields');
+  }
+
+  try {
+    const user = await ConsumerData.findOne({ email });
+    if (user) {
+      return res.status(400).send('User already exists');
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({ name, email, password: hashedPassword });
+
+    await newUser.save();
+
+    const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET);
+    const userDetails = {
+      name: newUser.name,
+      email: newUser.email,
+      userId: newUser._id,
+    };
+    res.status(200).json({ token, userDetails });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).send('Internal server error');
+  }
+};
+
 const getAllConsumerData = async (req, res) => {
   try {
     const consumerData = await consumerDataService.getConsumerData(req.query);
@@ -152,10 +234,14 @@ const updateConsumerStatusData = async (req, res) => {
 };
 
 module.exports = {
+  loginConsumer,
+  registerConsumer,
   deleteConsumerData,
   updateConsumerData,
   createConsumerData,
   getAllConsumerData,
   getConsumerDataById,
   updateConsumerStatusData,
+  countAllUsers,
+  countActiveUsers,
 };
