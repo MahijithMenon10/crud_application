@@ -16,7 +16,7 @@ const countAllUsers = async (req, res) => {
 
 const countActiveUsers = async (req, res) => {
   try {
-    const count = await ConsumerData.countDocuments({ status: 'active' });
+    const count = await ConsumerData.countDocuments({ status: true });
     res.json({ data: count, message: 'Active Users Count', statusCode: 200 });
   } catch (error) {
     res.status(500).json({ message: 'Server Error', error: error.message });
@@ -25,6 +25,7 @@ const countActiveUsers = async (req, res) => {
 
 const loginConsumer = async (req, res) => {
   const { email, password } = req.body;
+  console.log(email, password);
 
   try {
     const user = await ConsumerData.findOne({ email });
@@ -55,7 +56,6 @@ const loginConsumer = async (req, res) => {
 
 const registerConsumer = async (req, res) => {
   const { name, email, password } = req.body;
-
   if (!name || !email || !password) {
     return res.status(400).send('Please provide all fields');
   }
@@ -67,7 +67,7 @@ const registerConsumer = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ name, email, password: hashedPassword });
+    const newUser = new ConsumerData({ name, email, password: hashedPassword });
 
     await newUser.save();
 
@@ -77,7 +77,11 @@ const registerConsumer = async (req, res) => {
       email: newUser.email,
       userId: newUser._id,
     };
-    res.status(200).json({ token, userDetails });
+    res.status(200).json({
+      data: { userDetails, token },
+      message: 'User registered successfully',
+      statusCode: 200,
+    });
   } catch (err) {
     console.log(err.message);
     res.status(500).send('Internal server error');
@@ -125,9 +129,20 @@ const getAllConsumerData = async (req, res) => {
 const getConsumerDataById = async (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id))
-    return res.json({ message: 'Invalid id provided', statusCode: 404 });
+    return res
+      .status(404)
+      .json({ message: 'Invalid id provided', statusCode: 404 });
 
   const consumerData = await consumerDataService.getConsumerDataById(id);
+
+  if (!consumerData) {
+    // If no data is found for the given ID, return a 404 response
+    return res.status(404).json({
+      message: 'No consumer data found with the provided ID',
+      statusCode: 404,
+    });
+  }
+
   res.json({
     data: consumerData,
     message: 'Consumer Data Fetched By Id Successfully',
@@ -136,12 +151,25 @@ const getConsumerDataById = async (req, res) => {
 };
 
 const createConsumerData = async (req, res) => {
-  if (!req.body.name || !req.body.email || !req.body.status) {
-    return res.status(400).json({ message: 'Please fill all the fields' });
+  const { name, email, about, phoneNumber, dob, status } = req.body;
+
+  if (
+    !name ||
+    !email ||
+    !about ||
+    !phoneNumber ||
+    !dob ||
+    status === undefined
+  ) {
+    return res
+      .status(400)
+      .json({ message: 'Please fill all the fields', statusCode: 400 });
   }
 
   try {
-    const consumerData = req.body;
+    const consumerData = { name, email, about, phoneNumber, dob, status };
+    console.log(consumerData);
+
     const newConsumerData = new ConsumerData(consumerData);
 
     const savedConsumerData = await newConsumerData.save();
@@ -151,7 +179,14 @@ const createConsumerData = async (req, res) => {
       statusCode: 201,
     });
   } catch (err) {
-    res.json({ message: err.message, statusCode: 500 });
+    // Handle specific error types if needed, e.g., duplicate key error
+    let errorMessage = 'An error occurred while creating consumer data';
+    if (err.code === 11000) {
+      errorMessage = 'A consumer with the given email already exists';
+    }
+    res
+      .status(500)
+      .json({ message: errorMessage, statusCode: 500, error: err.message });
   }
 };
 
@@ -159,14 +194,26 @@ const updateConsumerData = async (req, res) => {
   const { id } = req.params;
   const changes = req.body;
 
-  if (!mongoose.Types.ObjectId.isValid(id))
-    return res.status(404).send(`No consumer data with id: ${id}`);
-
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.json({
+      data: null,
+      message: `No consumer data with id: ${id}`,
+      statusCode: 404,
+    });
+  }
   const updatedConsumerData = await ConsumerData.findByIdAndUpdate(
     id,
     { ...changes },
     { new: true, runValidators: true }
   );
+
+  if (!updatedConsumerData) {
+    return res.status(404).json({
+      data: null,
+      message: `No consumer data found with id: ${id}`,
+      statusCode: 404,
+    });
+  }
 
   res.json({
     data: updatedConsumerData,

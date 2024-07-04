@@ -19,8 +19,8 @@ const {
 router
   .post('/login', loginConsumer)
   .post('/register', registerConsumer)
-  .get('totalUsers', countAllUsers)
-  .get('activeUsers', countActiveUsers)
+  .get('/totalUsers', countAllUsers)
+  .get('/activeUsers', countActiveUsers)
   .get('/fetchUsers', getAllConsumerData)
   .get('/fetchuser/:id', getConsumerDataById)
   .post('/createuser', createConsumerData)
